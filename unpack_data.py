@@ -50,17 +50,6 @@ def readBinFile(filePath, dtype, packSize, totFirings, numExpr):
     f.close()
     return tempData.reshape((6*totFirings*numExpr, packSize)).transpose()
 
-# def generateChanMap(NumElements):
-#     temp = np.zeros(128, dtype=np.uint32)
-#     chanOffset = [1*128, 3*128, 2*128, 0*128]
-#     temp[0:8] = [1, 2, 3, 4, 68, 67, 66, 65]
-#     for n in range(1,16):
-#         temp[n*8:(n+1)*8] = temp[(n-1)*8:n*8] + 4
-#     chanMap = np.zeros(NumElements, dtype=np.uint32)
-#     for n in range(1,5):
-#         chanMap[(n-1)*128:n*128] = temp + chanOffset[n-1]
-#     return chanMap
-
 def saveChnData(chnData, chnDataAll, destDir, ind):
     fileName = 'chndata_' + str(ind) + '.h5'
     outputPath = os.path.join(destDir, fileName)
