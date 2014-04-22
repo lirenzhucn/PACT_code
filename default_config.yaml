@@ -1,0 +1,41 @@
+---
+description:         PACT unpack_data.m configuration file
+version:             1.0
+date:                2014-03-28
+
+extra:
+  src_dir:           /PACT_data/test
+  dest_dir:          /PACT_data/test/unpack
+  dtype:             <u4 # unsigned integer 32-bit, little endian (Windows)
+
+load:
+  EXP_START:         5
+  EXP_END:           5
+  NUM_EXP:           -1
+
+unpack:
+  Show_Image:        0
+  BoardName:         [Board2004, Board9054]
+  NumBoards:         2
+  DataBlockSize:     1300
+  PackSize:          8192
+  NumDaqChnsBoard:   32
+  TotFirings:        8
+  NumElements:       512
+  NumSegments:       1
+
+display:
+  span:              2
+  wi:                0 # Wiener deconvolution flag
+  pc:                0 # Photodiode calibration flag
+  exact:             0 # "Exact" recon. flag
+  denoise:           0 # Denoise flag
+
+recon:
+  V_M:               1.51 # Acoustic velocity in km/s
+  ini_angle:         225  # initial angle in degree
+  x_size:            25   # recon. image size
+  y_size:            25
+  resolution_factor: 20   # dxy = 1.0 mm / r.f.
+  center_x:          0    # center of image
+  center_y:          0
