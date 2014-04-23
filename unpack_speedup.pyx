@@ -41,9 +41,11 @@ def daq_loop(np.ndarray[unsigned int, ndim=2] packData1,
     cdef np.ndarray[unsigned int, ndim=2] pack_data
 
     cdef np.ndarray[DTYPE_t, ndim=2] chndata =\
-        np.zeros([DataBlockSize, NumElements], dtype=DTYPE)
+        np.zeros([DataBlockSize, NumElements],
+                 dtype=DTYPE, order='F')
     cdef np.ndarray[DTYPE_t, ndim=2] chndata_all =\
-        np.zeros([DataBlockSize, NumExperiments*NumElements], dtype=DTYPE)
+        np.zeros([DataBlockSize, NumExperiments*NumElements],
+                 dtype=DTYPE, order='F')
 
     cdef DTYPE_t mean_data
 
@@ -104,4 +106,5 @@ def daq_loop(np.ndarray[unsigned int, ndim=2] packData1,
     return chndata, chndata_all
 
 @cython.boundscheck(False)
-def recon_loop(np.ndarray[]):
+def recon_loop():
+    pass
