@@ -14,8 +14,11 @@ def notifyCli(msg):
 
 def renameUnindexedFile(srcDir):
     notifyCli('Renaming unindex raw data files in ' + srcDir)
-    pTarget = re.compile(r'Board[0-9]+Experiment[0-9]+TotalFiring[0-9]+_Pack.bin')
-    pExisting = re.compile(r'Board([0-9]+)Experiment([0-9]+)TotalFiring([0-9]+)_Pack_([0-9]+).bin')
+    pTarget = re.compile(
+        r'Board[0-9]+Experiment[0-9]+TotalFiring[0-9]+_Pack.bin')
+    pExisting = re.compile(
+        r'Board([0-9]+)Experiment([0-9]+)TotalFiring([0-9]+)'
+        r'_Pack_([0-9]+).bin')
     # find unindex bin files and the max index
     targetFileList = []
     indexList = []
@@ -53,6 +56,7 @@ def readBinFile(filePath, dtype, packSize, totFirings, numExpr):
 def saveChnData(chnData, chnDataAll, destDir, ind):
     fileName = 'chndata_' + str(ind) + '.h5'
     outputPath = os.path.join(destDir, fileName)
+    notifyCli('Saving data to ' + outputPath)
     f = h5py.File(outputPath, 'w')
     f['chndata'] = chnData
     f['chndata_all'] = chnDataAll
@@ -132,7 +136,8 @@ def unpack(opts):
         chnDataAll[:,badChannels,:] = -chnDataAll[:,badChannels,:]
         
         # saving channel RF data to HDF5 file
-        saveChnData(chnData, chnDataAll, opts['extra']['dest_dir'], ind)
+        saveChnData(chnData, chnDataAll,
+                    opts['extra']['dest_dir'], ind)
 
 def main():
     parser = argparse.ArgumentParser(
