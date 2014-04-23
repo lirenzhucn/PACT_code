@@ -23,6 +23,7 @@ unpack:
   TotFirings:        8
   NumElements:       512
   NumSegments:       1
+  BadChannels:       [21,22,23,24,85,86,87,88]
 
 display:
   span:              2
