@@ -118,8 +118,19 @@ def unpack(opts):
         chnData, chnDataAll = daq_loop(packData[0], packData[1],
                                        chanMap, numExpr)
         endTime = time.time()
-        notifyCli('daq_loop ended. ' + str(endTime - startTime) + ' s elapsed.')
+        notifyCli('daq_loop ended. ' + str(endTime - startTime) +\
+                      ' s elapsed.')
+        # fix bad channels
         chnData = -chnData/numExpr
+        badChannels =\
+            [(chnInd-1) for chnInd in opts['unpack']['BadChannels']]
+        chnData[:,badChannels] = -chnData[:,badChannels]
+        chnDataAll = np.reshape(chnDataAll,
+                                (opts['unpack']['DataBlockSize'],
+                                 opts['unpack']['NumElements'],
+                                 numExpr), order='F')
+        chnDataAll[:,badChannels,:] = -chnDataAll[:,badChannels,:]
+        
         # saving channel RF data to HDF5 file
         saveChnData(chnData, chnDataAll, opts['extra']['dest_dir'], ind)
 
