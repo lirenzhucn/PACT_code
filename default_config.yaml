@@ -10,7 +10,7 @@ extra:
   dtype:             <u4 # unsigned integer 32-bit, little endian (Windows)
 
 load:
-  EXP_START:         5
+  EXP_START:         2
   EXP_END:           5
   NUM_EXP:           -1
 

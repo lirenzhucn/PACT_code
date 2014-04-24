@@ -80,7 +80,7 @@ def read_channel_data(opts):
 
     fileNameList = os.listdir(srcDir)
 
-    chn_data_list = [None] * (endInd - startInd + 1)
+    # chn_data_list = [None] * (endInd - startInd + 1)
     chn_data_all_list = [None] * (endInd - startInd + 1)
 
     for ind in range(startInd, endInd+1):
@@ -143,31 +143,49 @@ def read_channel_data(opts):
             saveChnData(chnData, chnDataAll,
                         opts['extra']['dest_dir'], ind)
 
-        chn_data_list[endInd-startInd] = chnData
-        chn_data_all_list[endInd-startInd] = chnDataAll
+        # chn_data_list[endInd-startInd] = chnData
+        chn_data_all_list[ind-startInd] = chnDataAll
 
-    return chn_data_list, chn_data_all_list
+    # arrange raw data into a big 3D matrix
+    size_of_axis = lambda x, ind: (x.shape[ind] if x != None else 0)
+    z_steps = [size_of_axis(x, 2) for x in chn_data_all_list]
+    time_seq_len_list = [size_of_axis(x, 0) for x in chn_data_all_list]
+    detector_num_list = [size_of_axis(x, 1) for x in chn_data_all_list]
+    num_z_step = sum(z_steps)
+    time_seq_len = max(time_seq_len_list)
+    detector_num = max(detector_num_list)
+    chn_data_3d = np.zeros((time_seq_len, detector_num, num_z_step),
+                           order='F', dtype=np.double)
+    zInd = 0
+    for chn_data_all in chn_data_all_list:
+        if chn_data_all != None:
+            zSize = chn_data_all.shape[2]
+            chn_data_3d[:,:,zInd:zInd+zSize] = chn_data_all
+            zInd += zSize
+    # averaging over z steps
+    chn_data = np.mean(chn_data_3d, axis=2)
+    return chn_data, chn_data_3d
 
-def pre_process(chn_data_list, chn_data_all_list, opts):
+def pre_process(chn_data, chn_data_3d, opts):
     if (opts['display']['wi'] or
         opts['display']['pc'] or
         opts['display']['exact'] or
         opts['display']['denoise']):
         notifyCli('Warning: Pre-processing flag(s) found, '
                   'but none is currently supported.')
-    return chn_data_list, chn_data_all_list
+    return chn_data, chn_data_3d
 
-def reconstruction(chn_data_list, chn_data_all_list, opts):
+def reconstruction(chn_data, chn_data_3d, opts):
     """reconstruction from channel data"""
     pass
 
 def unpack(opts):
-    chn_data_list, chn_data_all_list =\
+    chn_data, chn_data_3d =\
         read_channel_data(opts)
-    chn_data_list, chn_data_all_list =\
-        pre_process(chn_data_list, chn_data_all_list, opts)
+    chn_data, chn_data_3d =\
+        pre_process(chn_data, chn_data_3d, opts)
     pa_img, pa_img_3d =\
-        reconstruction(chn_data_list, chn_data_all_list)
+        reconstruction(chn_data, chn_data_3d, opts)
 
 def main():
     parser = argparse.ArgumentParser(
