@@ -80,6 +80,9 @@ def read_channel_data(opts):
 
     fileNameList = os.listdir(srcDir)
 
+    chn_data_list = [None] * (endInd - startInd + 1)
+    chn_data_all_list = [None] * (endInd - startInd + 1)
+
     for ind in range(startInd, endInd+1):
         packData = [] # list of pack data
         # search through file list to find "experiment" (z step)
@@ -135,26 +138,33 @@ def read_channel_data(opts):
                                  numExpr), order='F')
         chnDataAll[:,badChannels,:] = -chnDataAll[:,badChannels,:]
         
-        # saving channel RF data to HDF5 file
-        saveChnData(chnData, chnDataAll,
-                    opts['extra']['dest_dir'], ind)
-    return chnData, chnDataAll
+        if opts['extra']['save_raw']:
+            # saving channel RF data to HDF5 file
+            saveChnData(chnData, chnDataAll,
+                        opts['extra']['dest_dir'], ind)
 
-def pre_process(chnData, chnDataAll, opts):
+        chn_data_list[endInd-startInd] = chnData
+        chn_data_all_list[endInd-startInd] = chnDataAll
+
+    return chn_data_list, chn_data_all_list
+
+def pre_process(chn_data_list, chn_data_all_list, opts):
     if (opts['display']['wi'] or
         opts['display']['pc'] or
         opts['display']['exact'] or
         opts['display']['denoise']):
         notifyCli('Warning: Pre-processing flag(s) found, '
                   'but none is currently supported.')
-    return chnData, chnDataAll
+    return chn_data_list, chn_data_all_list
 
 def reconstruction(chnData, chnDataAll, opts):
     pass
 
 def unpack(opts):
-    chnData, chnDataAll = read_channel_data(opts)
-    chnData, chnDataAll = pre_process(chnData, chnDataAll, opts)
+    chn_data_list, chn_data_all_list =\
+        read_channel_data(opts)
+    chn_data_list, chn_data_all_list =\
+        pre_process(chn_data_list, chn_data_all_list, opts)
 
 def main():
     parser = argparse.ArgumentParser(
