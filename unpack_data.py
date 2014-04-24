@@ -62,7 +62,7 @@ def saveChnData(chnData, chnDataAll, destDir, ind):
     f['chndata_all'] = chnDataAll
     f.close()
 
-def unpack(opts):
+def read_channel_data(opts):
     srcDir = opts['extra']['src_dir']
     destDir = opts['extra']['dest_dir']
     startInd = opts['load']['EXP_START']
@@ -138,6 +138,9 @@ def unpack(opts):
         # saving channel RF data to HDF5 file
         saveChnData(chnData, chnDataAll,
                     opts['extra']['dest_dir'], ind)
+
+def unpack(opts):
+    read_channel_data(opts)
 
 def main():
     parser = argparse.ArgumentParser(
