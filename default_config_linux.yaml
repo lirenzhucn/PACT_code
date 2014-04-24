@@ -4,6 +4,7 @@ version:             1.0
 date:                2014-03-28
 
 extra:
+  save_raw:          true
   src_dir:           /home/liren/PACT_data/test
   dest_dir:          /home/liren/PACT_data/test/unpack
   dtype:             <u4 # unsigned integer 32-bit, little endian (Windows)
@@ -27,10 +28,14 @@ unpack:
 
 display:
   span:              2
-  wi:                0 # Wiener deconvolution flag
-  pc:                0 # Photodiode calibration flag
-  exact:             0 # "Exact" recon. flag
-  denoise:           0 # Denoise flag
+  # Wiener deconvolution flag
+  wi:                false
+  # Photodiode calibration flag
+  pc:                false
+  # "Exact" recon. flag
+  exact:             false
+  # Denoise flag
+  denoise:           false
 
 recon:
   V_M:               1.51 # Acoustic velocity in km/s

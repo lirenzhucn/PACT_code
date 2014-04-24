@@ -138,9 +138,23 @@ def read_channel_data(opts):
         # saving channel RF data to HDF5 file
         saveChnData(chnData, chnDataAll,
                     opts['extra']['dest_dir'], ind)
+    return chnData, chnDataAll
+
+def pre_process(chnData, chnDataAll, opts):
+    if (opts['display']['wi'] or
+        opts['display']['pc'] or
+        opts['display']['exact'] or
+        opts['display']['denoise']):
+        notifyCli('Warning: Pre-processing flag(s) found, '
+                  'but none is currently supported.')
+    return chnData, chnDataAll
+
+def reconstruction(chnData, chnDataAll, opts):
+    pass
 
 def unpack(opts):
-    read_channel_data(opts)
+    chnData, chnDataAll = read_channel_data(opts)
+    chnData, chnDataAll = pre_process(chnData, chnDataAll, opts)
 
 def main():
     parser = argparse.ArgumentParser(
