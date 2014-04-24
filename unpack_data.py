@@ -157,7 +157,8 @@ def pre_process(chn_data_list, chn_data_all_list, opts):
                   'but none is currently supported.')
     return chn_data_list, chn_data_all_list
 
-def reconstruction(chnData, chnDataAll, opts):
+def reconstruction(chn_data_list, chn_data_all_list, opts):
+    """reconstruction from channel data"""
     pass
 
 def unpack(opts):
@@ -165,6 +166,8 @@ def unpack(opts):
         read_channel_data(opts)
     chn_data_list, chn_data_all_list =\
         pre_process(chn_data_list, chn_data_all_list, opts)
+    pa_img, pa_img_3d =\
+        reconstruction(chn_data_list, chn_data_all_list)
 
 def main():
     parser = argparse.ArgumentParser(
