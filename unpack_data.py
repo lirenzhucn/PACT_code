@@ -174,12 +174,18 @@ def main():
         description='unpack PACT raw data to single HDF5 files')
     parser.add_argument('opt_file', metavar='opt_file', type=str,
                         help='YAML file of options')
+    parser.add_argument('--no-save', '-ns', action='store_true',
+                        help='flag to override saving raw data option')
     # parse arguments
     args = parser.parse_args()
     # read and process YAML file
     f = open(args.opt_file)
     opts = yaml.safe_load(f)
     f.close()
+    # processing overriding flags
+    if args.no_save:
+        notifyCli('Overriding the save_raw flag to False')
+        opts['extra']['save_raw'] = False
 
     unpack(opts)
 
