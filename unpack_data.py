@@ -34,7 +34,8 @@ def renameUnindexedFile(srcDir):
     renameIndex = max(indexList) + 1
     for fileName in targetFileList:
         srcFilePath = os.path.join(srcDir, fileName)
-        destFilePath = srcFilePath[:-4] + '_'+str(renameIndex) + '.bin'
+        destFilePath = srcFilePath[:-4] + '_' +\
+                       str(renameIndex) + '.bin'
         notifyCli(srcFilePath)
         notifyCli('\t->' + destFilePath)
         os.rename(srcFilePath, destFilePath)
@@ -48,7 +49,8 @@ def readBinFile(filePath, dtype, packSize, totFirings, numExpr):
         return None
     tempData = np.fromfile(f, dtype=dtype)
     f.close()
-    return tempData.reshape((6*totFirings*numExpr, packSize)).transpose()
+    return tempData.reshape((6*totFirings*numExpr,
+                             packSize)).transpose()
 
 def saveChnData(chnData, chnDataAll, destDir, ind):
     fileName = 'chndata_' + str(ind) + '.h5'
