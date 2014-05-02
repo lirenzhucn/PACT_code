@@ -1,16 +1,13 @@
 # unpack_data.py
 
 import argparse
-import yaml
 import os
 import re
 import numpy as np
 import h5py
 import time
 from unpack_speedup import daq_loop, generateChanMap
-
-def notifyCli(msg):
-    print msg
+from pact_helpers import *
 
 def renameUnindexedFile(srcDir):
     notifyCli('Renaming unindex raw data files in ' + srcDir)
@@ -175,21 +172,15 @@ def pre_process(chn_data, chn_data_3d, opts):
                   'but none is currently supported.')
     return chn_data, chn_data_3d
 
-def reconstruction(chn_data, chn_data_3d, opts):
-    """reconstruction from channel data"""
-    pass
-
 def unpack(opts):
     chn_data, chn_data_3d =\
         read_channel_data(opts)
     chn_data, chn_data_3d =\
         pre_process(chn_data, chn_data_3d, opts)
-    pa_img, pa_img_3d =\
-        reconstruction(chn_data, chn_data_3d, opts)
 
 def main():
     parser = argparse.ArgumentParser(
-        description='unpack PACT raw data to single HDF5 files')
+        description='unpack PACT raw data to HDF5 files')
     parser.add_argument('opt_file', metavar='opt_file', type=str,
                         help='YAML file of options')
     parser.add_argument('--no-save', '-ns', action='store_true',
@@ -197,9 +188,7 @@ def main():
     # parse arguments
     args = parser.parse_args()
     # read and process YAML file
-    f = open(args.opt_file)
-    opts = yaml.safe_load(f)
-    f.close()
+    opts = loadOptions(args.opt_file)
     # processing overriding flags
     if args.no_save:
         notifyCli('Overriding the save_raw flag to False')
