@@ -17,8 +17,8 @@ def reconstruction_inline(chn_data, chn_data_3d, reconOpts):
     if nSteps != 512:
         notifyCli('ERROR: Number of transducers should be 512!')
         return None
-    totalSteps = nSteps
-    anglePerStep = 2 * np.pi / totalPerStep
+    totalPerSteps = nSteps
+    anglePerStep = 2 * np.pi / totalPerSteps
     return (None, None)
 
 def load_hdf5_data(desDir, ind):
