@@ -2,3 +2,4 @@ build
 *.pyd
 *.pyc
 *.so
+unpack_speedup.c
