@@ -174,6 +174,9 @@ def reconstruct(opts_path):
         save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind)
     else:
         notifyCli('Currently only Show_Image = 0 is supported.')
+        reImg = reconstruction_inline(chn_data,
+                                      chn_data_3d, opts['recon'])
+        save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind)
 
 if __name__ == '__main__':
     argh.dispatch_command(reconstruct)
