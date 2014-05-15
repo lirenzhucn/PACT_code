@@ -100,7 +100,8 @@ def reconstruction_inline(chn_data, chn_data_3d, reconOpts):
     # use the first z step data to calibrate DAQ delay
     delayIdx = find_delay_idx(paData[:,:,0], fs)
     # find index map and angular weighting for backprojection
-    notifyCli('Calculating geometry dependent backprojection parameters')
+    notifyCli('Calculating geometry dependent backprojection'
+    'parameters')
     (idxAll, angularWeight, totalAngularWeight)\
         = find_index_map_and_angular_weight\
         (nSteps, xImg, yImg, xReceive, yReceive, delayIdx, vm, fs)
