@@ -105,39 +105,6 @@ def daq_loop(np.ndarray[unsigned int, ndim=2] packData1,
 
     return chndata, chndata_all
 
-# @cython.boundscheck(False)
-# def find_index_map_and_angular_weight\
-#     (int nSteps,
-#      np.ndarray[DTYPE_t, ndim=2] xImg,
-#      np.ndarray[DTYPE_t, ndim=2] yImg,
-#      np.ndarray[DTYPE_t, ndim=1] xReceive,
-#      np.ndarray[DTYPE_t, ndim=1] yReceive,
-#      np.ndarray[DTYPE_t, ndim=1] delayIdx,
-#      DTYPE_t vm,
-#      DTYPE_t fs):
-#     cdef np.ndarray[DTYPE_t, ndim=2] totalAngularWeight =\
-#         np.zeros((xImg.shape[0], xImg.shape[1]), dtype=DTYPE)
-#     cdef np.ndarray[DTYPE_t, ndim=3] idxAll =\
-#         np.zeros((xImg.shape[0], xImg.shape[1], nSteps), dtype=DTYPE)
-#     cdef np.ndarray[DTYPE_t, ndim=3] angularWeight =\
-#         np.zeros((xImg.shape[0], xImg.shape[1], nSteps), dtype=DTYPE)
-#     cdef Py_ssize_t n
-#     cdef DTYPE_t r0
-#     cdef np.ndarray[DTYPE_t, ndim=2] dx, dy, rr0, cosAlpha, idx
-#     for n in range(nSteps):
-#         r0 = np.sqrt(xReceive[n]**2 + yReceive[n]**2)
-#         dx = xImg - xReceive[n]
-#         dy = yImg - yReceive[n]
-#         rr0 = np.sqrt(np.square(dx) + np.square(dy))
-#         cosAlpha = np.abs((-xReceive[n]*dx-yReceive[n]*dy)/r0/rr0)
-#         cosAlpha = np.minimum(cosAlpha, 0.999)
-#         angularWeight[:,:,n] = cosAlpha/np.square(rr0)
-#         totalAngularWeight = totalAngularWeight + angularWeight[:,:,n]
-#         idx = np.around((rr0/vm - delayIdx[n]) * fs)
-#         idx[idx>=1300] = 0
-#         idxAll[:,:,n] = idx
-#     return (idxAll, angularWeight, totalAngularWeight)
-
 @cython.boundscheck(False)
 def recon_loop(np.ndarray[DTYPE_t, ndim=2] pa_data,
                np.ndarray[np.uint_t, ndim=3] idxAll,
