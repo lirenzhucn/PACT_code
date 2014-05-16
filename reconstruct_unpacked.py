@@ -8,8 +8,9 @@ import re
 import numpy as np
 import scipy.signal as spsig
 from pact_helpers import *
-from unpack_speedup import recon_loop
+from recon_loop import recon_loop
 from time import time
+from matplotlib import pyplot as plt
 
 def find_delay_idx(paData, fs):
     """find the delay value from the first few samples on
@@ -45,8 +46,10 @@ def find_delay_idx(paData, fs):
 def find_index_map_and_angular_weight\
     (nSteps, xImg, yImg, xReceive, yReceive, delayIdx, vm, fs):
     totalAngularWeight = np.zeros(xImg.shape)
-    idxAll = np.zeros((xImg.shape[0], xImg.shape[1], nSteps), dtype=np.uint)
-    angularWeight = np.zeros((xImg.shape[0], xImg.shape[1], nSteps))
+    idxAll = np.zeros((xImg.shape[0], xImg.shape[1], nSteps),\
+                      dtype=np.uint, order='F')
+    angularWeight = np.zeros((xImg.shape[0], xImg.shape[1], nSteps),\
+                             order='F')
     for n in range(nSteps):
         r0 = np.sqrt(xReceive[n]**2 + yReceive[n]**2)
         dx = xImg - xReceive[n]
@@ -57,7 +60,7 @@ def find_index_map_and_angular_weight\
         angularWeight[:,:,n] = cosAlpha/np.square(rr0)
         totalAngularWeight = totalAngularWeight + angularWeight[:,:,n]
         idx = np.around((rr0/vm - delayIdx[n]) * fs)
-        idx[idx>=1300] = 0
+        idx[idx>=1300] = 1
         idxAll[:,:,n] = idx
     return (idxAll, angularWeight, totalAngularWeight)
 
@@ -109,10 +112,14 @@ def reconstruction_inline(chn_data, chn_data_3d, reconOpts):
     notifyCli('Backprojection starts...')
     for z in range(zSteps):
         # remove DC
-        paData[99:nSamples,:,z] = paData[99:nSamples,:,z] -\
-                                  np.dot(np.ones((nSamples-99,1)),\
-                                         np.mean(paData[99-nSamples,:,z]))
-        paImg = recon_loop(paData[:,:,z], idxAll, angularWeight, nPixelx, nPixely, nSteps)
+        paDataDC = np.dot(np.ones((nSamples-99,1)),\
+                          np.mean(paData[99:nSamples,:,z],
+                                  axis=0).reshape((1,paData.shape[1])))
+        paData[99:nSamples,:,z] = paData[99:nSamples,:,z] - paDataDC
+        paImg = recon_loop(paData[:,:,z], idxAll, angularWeight,\
+                           nPixelx, nPixely, nSteps)
+        if paImg == None:
+            notifyCli('WARNING: None returned as 2D reconstructed image!')
         reImg[:,:,z] = paImg
         notifyCli(str(z)+'/'+str(zSteps))
     return reImg
@@ -173,11 +180,15 @@ def reconstruct(opts_path):
         reImg = reconstruction_inline(chn_data,
                                       chn_data_3d, opts['recon'])
         save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind)
+        plt.imshow(reImg[:,:,0], cmap='gray')
+        plt.show()
     else:
         notifyCli('Currently only Show_Image = 0 is supported.')
         reImg = reconstruction_inline(chn_data,
                                       chn_data_3d, opts['recon'])
         save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind)
+        plt.imshow(reImg[:,:,0], cmap='gray')
+        plt.show()
 
 if __name__ == '__main__':
     argh.dispatch_command(reconstruct)
