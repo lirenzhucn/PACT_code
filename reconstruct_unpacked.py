@@ -60,7 +60,6 @@ def find_index_map_and_angular_weight\
         angularWeight[:,:,n] = cosAlpha/np.square(rr0)
         totalAngularWeight = totalAngularWeight + angularWeight[:,:,n]
         idx = np.around((rr0/vm - delayIdx[n]) * fs)
-        idx[idx>1300] = 1
         idxAll[:,:,n] = idx
     return (idxAll, angularWeight, totalAngularWeight)
 
@@ -78,6 +77,7 @@ def reconstruction_inline(chn_data, chn_data_3d, reconOpts):
     fs = reconOpts['fs']
     R = reconOpts['R']
     # paData = np.copy(chn_data_3d[0:1300,:,:]) # cropping the first 1300
+    paData = chn_data_3d
     (nSamples, nSteps, zSteps) = chn_data_3d.shape
     if nSteps != 512:
         notifyCli('ERROR: Number of transducers should be 512!')
@@ -109,6 +109,7 @@ def reconstruction_inline(chn_data, chn_data_3d, reconOpts):
     (idxAll, angularWeight, totalAngularWeight)\
         = find_index_map_and_angular_weight\
         (nSteps, xImg, yImg, xReceive, yReceive, delayIdx, vm, fs)
+    idxAll[idxAll>nSamples] = 1
     # backprojection
     notifyCli('Backprojection starts...')
     for z in range(zSteps):
