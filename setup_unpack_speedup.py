@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Set up script for compiling the speedup package"""
 
 from distutils.core import setup

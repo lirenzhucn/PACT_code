@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Set up script for compiling the recon_loop package"""
 
 from distutils.core import setup, Extension
