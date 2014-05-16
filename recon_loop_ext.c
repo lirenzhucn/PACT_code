@@ -3,9 +3,11 @@
 #include <math.h>
 #include <stdio.h>
 
+typedef unsigned long uint64_t;
+
 // implementation function
 void recon_loop_imp(const double *pa_data,
-		    const unsigned int *idxAll,
+		    const uint64_t *idxAll,
 		    const double *angularWeight,
 		    int nPixelx, int nPixely, int nSteps,
 		    int nTimeSamples,
@@ -16,6 +18,7 @@ void recon_loop_imp(const double *pa_data,
   for (iStep=0; iStep<nSteps; iStep++) {
     pcount = 0;
     iskip = nTimeSamples * iStep - 1;
+    /* iskip = 1301 * iStep - 1; */
     for (y=0; y<nPixely; y++) {
       for (x=0; x<nPixelx; x++) {
 	pa_img[pcount++] +=
@@ -45,7 +48,7 @@ static PyObject* recon_loop(PyObject* self, PyObject* args) {
 
   int paDataValid, idxAllValid, angularWeightValid;
   double *pa_data, *angularWeight;
-  unsigned int *idxAll;
+  uint64_t *idxAll;
   double *pa_img;
 
   // extract argument tuple
@@ -72,7 +75,7 @@ static PyObject* recon_loop(PyObject* self, PyObject* args) {
   dim_pa_img[1] = nPixely;
   p_pa_img = PyArray_ZEROS(2, dim_pa_img, NPY_DOUBLE, 1);
   pa_data = (double *)PyArray_DATA(p_pa_data);
-  idxAll = (unsigned int *)PyArray_DATA(p_idxAll);
+  idxAll = (uint64_t *)PyArray_DATA(p_idxAll);
   angularWeight = (double *)PyArray_DATA(p_angularWeight);
   pa_img = (double *)PyArray_DATA(p_pa_img);
 
