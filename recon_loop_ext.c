@@ -72,8 +72,8 @@ static PyObject* recon_loop(PyObject* self, PyObject* args) {
     printf("%d, %d, %d\n", paDataValid, idxAllValid, angularWeightValid);
     goto fail;
   }
-  dim_pa_img[0] = nPixelx;
-  dim_pa_img[1] = nPixely;
+  dim_pa_img[0] = nPixely;
+  dim_pa_img[1] = nPixelx;
   p_pa_img = PyArray_ZEROS(2, dim_pa_img, NPY_DOUBLE, 1);
   pa_data = (double *)PyArray_DATA(p_pa_data);
   idxAll = (uint64_t *)PyArray_DATA(p_idxAll);

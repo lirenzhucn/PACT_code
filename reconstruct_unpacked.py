@@ -172,13 +172,13 @@ def reconstruct(opts_path):
     if opts['unpack']['Show_Image'] == 0:
         reImg = reconstruction_inline(chn_data_3d, opts['recon'])
         save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind)
-        plt.imshow(reImg[:,:,0], cmap='gray')
+        plt.imshow(reImg[:,:,reImg.shape[2]/2], cmap='gray')
         plt.show()
     else:
         notifyCli('Currently only Show_Image = 0 is supported.')
         reImg = reconstruction_inline(chn_data_3d, opts['recon'])
         save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind)
-        plt.imshow(reImg[:,:,0], cmap='gray')
+        plt.imshow(reImg[:,:,reImg.shape[2]/2], cmap='gray')
         plt.show()
 
 if __name__ == '__main__':
