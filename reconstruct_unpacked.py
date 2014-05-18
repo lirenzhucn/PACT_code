@@ -63,7 +63,7 @@ def find_index_map_and_angular_weight\
         idxAll[:,:,n] = idx
     return (idxAll, angularWeight, totalAngularWeight)
 
-def reconstruction_inline(chn_data, chn_data_3d, reconOpts):
+def reconstruction_inline(chn_data_3d, reconOpts):
     """reconstruction function re-implemented according to
     subfunc_reconstruction2_inline.m
     """
@@ -182,15 +182,13 @@ def reconstruct(opts_path):
     # check Show_Image and dispatch to the right method
     # currently only 0 is supported
     if opts['unpack']['Show_Image'] == 0:
-        reImg = reconstruction_inline(chn_data,
-                                      chn_data_3d, opts['recon'])
+        reImg = reconstruction_inline(chn_data_3d, opts['recon'])
         save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind)
         plt.imshow(reImg[:,:,0], cmap='gray')
         plt.show()
     else:
         notifyCli('Currently only Show_Image = 0 is supported.')
-        reImg = reconstruction_inline(chn_data,
-                                      chn_data_3d, opts['recon'])
+        reImg = reconstruction_inline(chn_data_3d, opts['recon'])
         save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind)
         plt.imshow(reImg[:,:,0], cmap='gray')
         plt.show()
