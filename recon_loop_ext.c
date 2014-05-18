@@ -92,8 +92,18 @@ static PyObject* recon_loop(PyObject* self, PyObject* args) {
   return Py_None;
 }
 
+// speed-up implementation of find_index_map_and_angular_weight
+// We will not have separate implementation function this time, since
+// we would like to use some numpy functions on the data, and in order
+// to do so, all the arrays have to stay as PyArray_Type.
+static PyObject* find_index_map_and_angular_weight(PyObject* self, PyObject* args) {
+}
+
+
 static PyMethodDef ReconMethods[] = {
   {"recon_loop", recon_loop, METH_VARARGS, "Reconstruction loop"},
+  {"find_index_map_and_angular_weight", find_index_map_and_angular_weight,
+   METH_VARARGS, "Find index map and angular weights for back-projection"},
   {NULL, NULL, 0, NULL} // the end
 };
 
