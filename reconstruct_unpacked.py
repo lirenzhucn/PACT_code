@@ -106,10 +106,12 @@ def reconstruction_inline(chn_data_3d, reconOpts):
     # find index map and angular weighting for backprojection
     notifyCli('Calculating geometry dependent backprojection'
     'parameters')
+    st = time()
     (idxAll, angularWeight, totalAngularWeight)\
         = find_index_map_and_angular_weight\
         (nSteps, xImg, yImg, xReceive, yReceive, delayIdx, vm, fs)
     idxAll[idxAll>nSamples] = 1
+    print time() - st
     # backprojection
     notifyCli('Backprojection starts...')
     for z in range(zSteps):
@@ -169,7 +171,13 @@ def save_reconstructed_image(reImg, desDir, ind):
 
 @argh.arg('opts_path', type=str, help='path to YAML option file')
 def reconstruct(opts_path):
-    """reconstruction from channel data"""
+    """reconstruction from channel data
+    This is the command line interface of the reconstruction
+    part. This function takes the path to the option file as an
+    input, extracts information such as locations of the input files
+    and so on, calls reconstruct_inline to do the reconstruction, and
+    finally save and display the reconstructed images.
+    """
     opts = loadOptions(opts_path)
     # load data from hdf5 files
     ind = opts['load']['EXP_START']
