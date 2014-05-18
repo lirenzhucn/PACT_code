@@ -125,7 +125,8 @@ def reconstruction_inline(chn_data, chn_data_3d, reconOpts):
         if paImg == None:
             notifyCli('WARNING: None returned as 2D reconstructed image!')
         reImg[:,:,z] = paImg
-        notifyCli(str(z)+'/'+str(zSteps))
+        # notifyCli(str(z)+'/'+str(zSteps))
+        update_progress(z+1, zSteps)
     return reImg
 
 def load_hdf5_data(desDir, ind):
