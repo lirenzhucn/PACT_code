@@ -43,26 +43,6 @@ def find_delay_idx(paData, fs):
             delayIdx[n] = -float(m2 + m3 + 2) / 2 / fs
     return delayIdx
 
-# def find_index_map_and_angular_weight\
-#     (nSteps, xImg, yImg, xReceive, yReceive, delayIdx, vm, fs):
-#     totalAngularWeight = np.zeros(xImg.shape, order='F')
-#     idxAll = np.zeros((xImg.shape[0], xImg.shape[1], nSteps),\
-#                       dtype=np.uint, order='F')
-#     angularWeight = np.zeros((xImg.shape[0], xImg.shape[1], nSteps),\
-#                              order='F')
-#     for n in range(nSteps):
-#         r0 = np.sqrt(np.square(xReceive[n]) + np.square(yReceive[n]))
-#         dx = xImg - xReceive[n]
-#         dy = yImg - yReceive[n]
-#         rr0 = np.sqrt(np.square(dx) + np.square(dy))
-#         cosAlpha = np.abs((-xReceive[n]*dx-yReceive[n]*dy)/r0/rr0)
-#         cosAlpha = np.minimum(cosAlpha, 0.999)
-#         angularWeight[:,:,n] = cosAlpha/np.square(rr0)
-#         totalAngularWeight = totalAngularWeight + angularWeight[:,:,n]
-#         idx = np.around((rr0/vm - delayIdx[n]) * fs)
-#         idxAll[:,:,n] = idx
-#     return (idxAll, angularWeight, totalAngularWeight)
-
 def reconstruction_inline(chn_data_3d, reconOpts):
     """reconstruction function re-implemented according to
     subfunc_reconstruction2_inline.m
@@ -108,12 +88,10 @@ def reconstruction_inline(chn_data_3d, reconOpts):
     # find index map and angular weighting for backprojection
     notifyCli('Calculating geometry dependent backprojection'
     'parameters')
-    st = time()
     (idxAll, angularWeight, totalAngularWeight)\
         = find_index_map_and_angular_weight\
         (nSteps, xImg, yImg, xReceive, yReceive, delayIdx, vm, fs)
     idxAll[idxAll>nSamples] = 1
-    print time() - st
     # backprojection
     notifyCli('Backprojection starts...')
     for z in range(zSteps):

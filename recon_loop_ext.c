@@ -98,6 +98,28 @@ void find_index_map_and_angular_weight_imp
  const double *xReceive, const double *yReceive, const double *delayIdx,
  const double vm, const double fs, const long nSize2D,
  uint64_t *idxAll, double *angularWeight, double *totalAngularWeight) {
+  /* Reference python codes
+def find_index_map_and_angular_weight\
+    (nSteps, xImg, yImg, xReceive, yReceive, delayIdx, vm, fs):
+    totalAngularWeight = np.zeros(xImg.shape, order='F')
+    idxAll = np.zeros((xImg.shape[0], xImg.shape[1], nSteps),\
+                      dtype=np.uint, order='F')
+    angularWeight = np.zeros((xImg.shape[0], xImg.shape[1], nSteps),\
+                             order='F')
+    for n in range(nSteps):
+        r0 = np.sqrt(np.square(xReceive[n]) + np.square(yReceive[n]))
+        dx = xImg - xReceive[n]
+        dy = yImg - yReceive[n]
+        rr0 = np.sqrt(np.square(dx) + np.square(dy))
+        cosAlpha = np.abs((-xReceive[n]*dx-yReceive[n]*dy)/r0/rr0)
+        cosAlpha = np.minimum(cosAlpha, 0.999)
+        angularWeight[:,:,n] = cosAlpha/np.square(rr0)
+        totalAngularWeight = totalAngularWeight + angularWeight[:,:,n]
+        idx = np.around((rr0/vm - delayIdx[n]) * fs)
+        idxAll[:,:,n] = idx
+    return (idxAll, angularWeight, totalAngularWeight)
+  */
+
   int n, i;
   double r0, rr0, dx, dy, cosAlpha;
   for (n=0; n<nSteps; n++) {
