@@ -4,7 +4,6 @@ import argh
 import yaml
 import h5py
 import numpy as np
-import scipy.signal as spsig
 from pact_helpers import *
 from recon_loop import recon_loop, find_index_map_and_angular_weight
 from time import time
