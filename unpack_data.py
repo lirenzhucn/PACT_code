@@ -181,11 +181,17 @@ def unpack(opts):
     chn_data, chn_data_3d =\
         pre_process(chn_data, chn_data_3d, opts)
 
+@argh.arg('path_to_data_folder', type=str, help='path to the data folder')
 @argh.arg('opt_file', type=str, help='YAML file of options')
 @argh.arg('-ns', '--no-save', help='flag to override saving raw data option')
-def main(opt_file, no_save=False):
+def main(path_to_data_folder, opt_file, no_save=False):
     # read and process YAML file
     opts = loadOptions(opt_file)
+    # put user defined path to data folder and unpack folder to opt struct.
+    srcDir = os.path.normpath(path_to_data_folder)
+    destDir = os.path.normpath(srcDir + '/unpack')
+    opts['extra']['src_dir'] = srcDir
+    opts['extra']['dest_dir'] = destDir
     # processing overriding flags
     if no_save:
         notifyCli('Overriding the save_raw flag to False')

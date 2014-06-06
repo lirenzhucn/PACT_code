@@ -5,8 +5,8 @@ date:                2014-03-28
 
 extra:
   save_raw:          true
-  src_dir:           /home/liren/Documents/Project_data/PACT_data/test
-  dest_dir:          /home/liren/Documents/Project_data/PACT_data/test/unpack
+  # src_dir:           /home/liren/Documents/Project_data/PACT_data/test
+  # dest_dir:          /home/liren/Documents/Project_data/PACT_data/test/unpack
   dtype:             <u4 # unsigned integer 32-bit, little endian (Windows)
 
 load:
