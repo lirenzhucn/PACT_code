@@ -96,9 +96,9 @@ def save_reconstructed_image(reImg, desDir, ind):
     f['reImg'] = reImg
     f.close()
 
-@argh.arg('path_to_data_folder', type=str, help='path to the data folder')
-@argh.arg('opts_path', type=str, help='path to YAML option file')
-def reconstruct(path_to_data_folder, opts_path):
+@argh.arg('-o', '--opts-path', type=str, help='path to YAML option file')
+@argh.arg('-p', '--path-to-data-folder', type=str, help='path to the data folder')
+def reconstruct(opts_path='default_config_linux.yaml', path_to_data_folder=''):
     """reconstruction from channel data
     This is the command line interface of the reconstruction
     part. This function takes the path to the option file as an
@@ -107,11 +107,12 @@ def reconstruct(path_to_data_folder, opts_path):
     finally save and display the reconstructed images.
     """
     opts = loadOptions(opts_path)
-    # put user defined path to data folder and unpack folder to opt struct.
-    srcDir = os.path.normpath(path_to_data_folder)
-    destDir = os.path.normpath(srcDir + '/unpack')
-    opts['extra']['src_dir'] = srcDir
-    opts['extra']['dest_dir'] = destDir
+    if path_to_data_folder != '':
+        # put user defined path to data folder and unpack folder to opt struct.
+        srcDir = os.path.normpath(path_to_data_folder)
+        destDir = os.path.normpath(srcDir + '/unpack')
+        opts['extra']['src_dir'] = srcDir
+        opts['extra']['dest_dir'] = destDir
     # load data from hdf5 files
     ind = opts['load']['EXP_START']
     if opts['load']['EXP_END'] != -1 and\
