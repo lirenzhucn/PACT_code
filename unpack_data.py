@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 # unpack_data.py
 
-import argparse
+import argh
 import os
 import re
 import numpy as np
@@ -180,23 +181,17 @@ def unpack(opts):
     chn_data, chn_data_3d =\
         pre_process(chn_data, chn_data_3d, opts)
 
-def main():
-    parser = argparse.ArgumentParser(
-        description='unpack PACT raw data to HDF5 files')
-    parser.add_argument('opt_file', metavar='opt_file', type=str,
-                        help='YAML file of options')
-    parser.add_argument('--no-save', '-ns', action='store_true',
-                        help='flag to override saving raw data option')
-    # parse arguments
-    args = parser.parse_args()
+@argh.arg('opt_file', type=str, help='YAML file of options')
+@argh.arg('-ns', '--no-save', help='flag to override saving raw data option')
+def main(opt_file, no_save=False):
     # read and process YAML file
-    opts = loadOptions(args.opt_file)
+    opts = loadOptions(opt_file)
     # processing overriding flags
-    if args.no_save:
+    if no_save:
         notifyCli('Overriding the save_raw flag to False')
         opts['extra']['save_raw'] = False
 
     unpack(opts)
 
 if __name__ == '__main__':
-    main()
+    argh.dispatch_command(main)
