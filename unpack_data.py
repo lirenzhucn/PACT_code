@@ -139,6 +139,9 @@ def read_channel_data(opts):
         chnDataAll[:,badChannels,:] = -chnDataAll[:,badChannels,:]
         
         if opts['extra']['save_raw']:
+            # check if the directory is there or not
+            if not os.path.exists(opts['extra']['dest_dir']):
+                os.mkdir(opts['extra']['dest_dir'])
             # saving channel RF data to HDF5 file
             saveChnData(chnData, chnDataAll,
                         opts['extra']['dest_dir'], ind)
@@ -182,9 +185,11 @@ def unpack(opts):
         pre_process(chn_data, chn_data_3d, opts)
 
 @argh.arg('-o', '--opt-file', type=str, help='YAML file of options')
-@argh.arg('-p', '--path-to-data-folder', type=str, help='path to the data folder')
+@argh.arg('-p', '--path-to-data-folder', type=str,
+          help='path to the data folder')
 @argh.arg('-ns', '--no-save', help='flag to override saving raw data option')
-def main(opt_file='default_config_linux.yaml', path_to_data_folder='', no_save=False):
+def main(opt_file='default_config_linux.yaml',
+         path_to_data_folder='', no_save=False):
     # read and process YAML file
     opts = loadOptions(opt_file)
     if path_to_data_folder != '':
