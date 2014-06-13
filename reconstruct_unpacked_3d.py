@@ -116,7 +116,7 @@ def reconstruction_3d(paData, reconOpts):
           xReceive[ni], yReceive[ni], zReceive[zi],
           np.float32(lenR), np.float32(vm), delayIdx[ni],
           np.float32(fs), np.uint32(nSamples),
-          grid=(nPixely,nPixelx), block=(nPixelz,1,1))
+          grid=(nPixelx,nPixely), block=(nPixelz,1,1))
     et = time()
     print (et - st)/60.0
   cuda.memcpy_dtoh(reImg, d_reImg)
