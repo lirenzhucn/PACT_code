@@ -10,8 +10,8 @@ extra:
   dtype:             <u4 # unsigned integer 32-bit, little endian (Windows)
 
 load:
-  EXP_START:         5
-  EXP_END:           5
+  EXP_START:         4
+  EXP_END:           4
   NUM_EXP:           -1
 
 unpack:
@@ -38,16 +38,21 @@ display:
   denoise:           false
 
 recon:
+  algorithm:         envelope # envelope or delay-and-sum
+  # algorithm:         delay-and-sum # envelope or delay-and-sum
   V_M:               1.51 # Acoustic velocity in km/s
   ini_angle:         225  # initial angle in degree
-  x_size:            15   # recon. image size
-  y_size:            15
-  z_size:            4
+  # x_size:            15   # recon. image size
+  # y_size:            15
+  x_size:            25   # recon. image size
+  y_size:            25
+  z_size:            3
   resolution_factor: 20   # dxy = 1.0 mm / r.f.
   center_x:          0    # center of image
-  center_y:          -10
+  # center_y:          -10
+  center_y:          0
   fs:                40   # sampling frequency in MHz
   R:                 25   # radius of the ring array (mm)
   Len_R:             19.8 # focal length (mm)
-  z_per_step:        0.05 # z step size (mm)
+  z_per_step:        0.1 # z step size (mm)
   z_resolution:      20   # resolution factor of z axis

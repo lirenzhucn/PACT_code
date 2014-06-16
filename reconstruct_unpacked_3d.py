@@ -10,8 +10,7 @@ import pycuda.autoinit
 import pycuda.driver as cuda
 from pycuda.compiler import SourceModule
 
-import scikits.cuda.linalg as culinalg
-import scikits.cuda.misc as cumisc
+from scipy.signal import hilbert
 
 MOD = SourceModule("""
 #include <math.h>
@@ -58,7 +57,6 @@ def reconstruction_3d(paData, reconOpts):
   """3D reconstruction algorithm
   see Jun's focal-line reconstruction paper and codes for details
   """
-  paData = paData.astype(np.float32)
   nSamples, nSteps, zSteps = paData.shape
   lenR = reconOpts['Len_R']
   R = reconOpts['R']
@@ -74,10 +72,15 @@ def reconstruction_3d(paData, reconOpts):
   rf = reconOpts['resolution_factor']
   zrf = reconOpts['z_resolution']
   fs = reconOpts['fs']
+  algorithm = reconOpts['algorithm']
+  if algorithm == 'envelope':
+    notifyCli('Extracting envelope of A-line signals')
+    paData = np.abs(hilbert(paData, axis=0))
+  paData = paData.astype(np.float32)
   anglePerStep = 2*np.pi/nSteps
-  nPixelx = xSize * rf
-  nPixely = ySize * rf
-  nPixelz = zSize * zrf
+  nPixelx = int(xSize * rf)
+  nPixely = int(ySize * rf)
+  nPixelz = int(zSize * zrf)
   # note range is 0-start indices
   xRange = (np.arange(1,nPixelx+1,1,dtype=np.float32)\
             - nPixelx/2) * xSize / nPixelx + xCenter
@@ -100,6 +103,7 @@ def reconstruction_3d(paData, reconOpts):
   delayIdx = find_delay_idx(paData[:,:,0], fs)
   delayIdx = delayIdx.astype(np.float32)
   # back projection loop
+  notifyCli('Reconstruction starting. Keep patient.')
   d_xRange = cuda.mem_alloc(xRange.nbytes)
   cuda.memcpy_htod(d_xRange, xRange)
   d_yRange = cuda.mem_alloc(yRange.nbytes)
@@ -108,6 +112,7 @@ def reconstruction_3d(paData, reconOpts):
   cuda.memcpy_htod(d_zRange, zRange)
   bpk = MOD.get_function('backprojection_kernel')
   d_paDataLine = cuda.mem_alloc(nSamples*4)
+  st_all = time()
   for zi in range(zSteps):
     st = time()
     for ni in range(nSteps):
@@ -118,8 +123,13 @@ def reconstruction_3d(paData, reconOpts):
           np.float32(fs), np.uint32(nSamples),
           grid=(nPixelx,nPixely), block=(nPixelz,1,1))
     et = time()
-    print (et - st)/60.0
+    # use the execution time of the last loop to guess the remaining time
+    time_remaining = ((zSteps - zi) * (et - st)) / 60.0
+    update_progress_with_time(zi+1, zSteps, time_remaining)
   cuda.memcpy_dtoh(reImg, d_reImg)
+  et_all = time()
+  print '\nDone'
+  notifyCli('Total time elapsed: {:.2f} mins'.format((et_all-st_all)/60.0))
   return reImg
 
 def save_reconstructed_image(reImg, desDir, ind):
@@ -134,7 +144,7 @@ def save_reconstructed_image(reImg, desDir, ind):
       if matchObj != None:
         indList.append(int(matchObj.group(1)))
     ind = max(indList)
-  fileName = 'reImg_' + str(ind) + '.h5'
+  fileName = 'reImg_' + str(ind) + '_3D.h5'
   outPath = os.path.join(desDir, fileName)
   notifyCli('Saving image data to ' + outPath)
   f = h5py.File(outPath, 'w')

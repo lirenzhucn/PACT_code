@@ -8,6 +8,7 @@ from pact_helpers import *
 from recon_loop import recon_loop, find_index_map_and_angular_weight
 from time import time
 from matplotlib import pyplot as plt
+from scipy.signal import hilbert
 
 def reconstruction_inline(chn_data_3d, reconOpts):
     """reconstruction function re-implemented according to
@@ -24,6 +25,10 @@ def reconstruction_inline(chn_data_3d, reconOpts):
     R = reconOpts['R']
     # paData = np.copy(chn_data_3d[0:1300,:,:]) # cropping the first 1300
     paData = chn_data_3d
+    algorithm = reconOpts['algorithm']
+    if algorithm == 'envelope':
+        notifyCli('Extracting envelope of A-line signals')
+        paData = np.abs(hilbert(paData, axis=0))
     (nSamples, nSteps, zSteps) = chn_data_3d.shape
     if nSteps != 512:
         notifyCli('ERROR: Number of transducers should be 512!')

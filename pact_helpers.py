@@ -21,6 +21,20 @@ def update_progress(current, total):
   if current == total:
     print '\tDone'
 
+def update_progress_with_time(current, total, t):
+  """update the progress bar with a time indicator instead of a
+  percentage indicator
+  """
+  TOTAL_INDICATOR_NUM = 50
+  CHAR_INDICATOR = '#'
+  # progress = int(float(current)/total * 100)
+  numIndicator = int(float(current)/total * TOTAL_INDICATOR_NUM)
+  sys.stdout.write('\r{:>5.1f} mins [{:<50}]'.format\
+                   (t, CHAR_INDICATOR*numIndicator))
+  sys.stdout.flush()
+  if current == total:
+    print '\tDone'
+
 def loadOptions(opts_path):
   # read and process YAML file
   f = open(opts_path)
