@@ -91,7 +91,6 @@ def reconstruction_3d(paData, reconOpts):
     update_progress_with_time(zi+1, zSteps, time_remaining)
   cuda.memcpy_dtoh(reImg, d_reImg)
   et_all = time()
-  print '\nDone'
   notifyCli('Total time elapsed: {:.2f} mins'.format((et_all-st_all)/60.0))
   return reImg
 
