@@ -93,6 +93,10 @@ static PyObject* recon_loop(PyObject* self, PyObject* args) {
   return Py_None;
 }
 
+double round(double d) {
+  return (d>0.0 ? floor(d+0.5) : floor(d-0.5));
+}
+
 void find_index_map_and_angular_weight_imp
 (const int nSteps, const double *xImg, const double *yImg,
  const double *xReceive, const double *yReceive, const double *delayIdx,
