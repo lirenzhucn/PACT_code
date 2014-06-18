@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import argh
 import numpy as np
 from time import time
@@ -118,6 +119,11 @@ def reconstruct(opts_path):
   """reconstruct from channel data
   """
   opts = loadOptions(opts_path)
+  # normalize paths according to the platform
+  opts['extra']['src_dir'] =\
+  os.path.expanduser(os.path.normpath(opts['extra']['src_dir']))
+  opts['extra']['dest_dir'] =\
+  os.path.expanduser(os.path.normpath(opts['extra']['dest_dir']))
   # load data from hdf5 files
   ind = opts['load']['EXP_START']
   if opts['load']['EXP_END'] != -1 and\
