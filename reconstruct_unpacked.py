@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import argh
 import yaml
 import h5py
@@ -118,6 +119,11 @@ def reconstruct(opts_path='default_config_linux.yaml', path_to_data_folder=''):
         destDir = os.path.normpath(srcDir + '/unpack')
         opts['extra']['src_dir'] = srcDir
         opts['extra']['dest_dir'] = destDir
+    # normalize paths according to the platform
+    opts['extra']['src_dir'] =\
+    os.path.expanduser(os.path.normpath(opts['extra']['src_dir']))
+    opts['extra']['dest_dir'] =\
+    os.path.expanduser(os.path.normpath(opts['extra']['dest_dir']))
     # load data from hdf5 files
     ind = opts['load']['EXP_START']
     if opts['load']['EXP_END'] != -1 and\

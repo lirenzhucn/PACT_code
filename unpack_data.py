@@ -198,6 +198,11 @@ def main(opt_file='default_config_linux.yaml',
         destDir = os.path.normpath(srcDir + '/unpack')
         opts['extra']['src_dir'] = srcDir
         opts['extra']['dest_dir'] = destDir
+    # normalize paths according to the platform
+    opts['extra']['src_dir'] =\
+    os.path.expanduser(os.path.normpath(opts['extra']['src_dir']))
+    opts['extra']['dest_dir'] =\
+    os.path.expanduser(os.path.normpath(opts['extra']['dest_dir']))
     # processing overriding flags
     if no_save:
         notifyCli('Overriding the save_raw flag to False')
