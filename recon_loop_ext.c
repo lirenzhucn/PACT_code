@@ -4,15 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef unsigned long uint64_t;
-
 // implementation function
-void recon_loop_imp(const double *pa_data,
-		    const uint64_t *idxAll,
-		    const double *angularWeight,
+void recon_loop_imp(const npy_double *pa_data,
+		    const npy_uint64 *idxAll,
+		    const npy_double *angularWeight,
 		    int nPixelx, int nPixely, int nSteps,
 		    int nTimeSamples,
-		    double *pa_img) {
+		    npy_double *pa_img) {
   int iStep, y, x, icount, pcount, iskip;
 
   icount = 0;
@@ -48,9 +46,9 @@ static PyObject* recon_loop(PyObject* self, PyObject* args) {
   npy_intp dim_pa_img[2];
 
   int paDataValid, idxAllValid, angularWeightValid;
-  double *pa_data, *angularWeight;
-  uint64_t *idxAll;
-  double *pa_img;
+  npy_double *pa_data, *angularWeight;
+  npy_uint64 *idxAll;
+  npy_double *pa_img;
 
   // extract argument tuple
   if (!PyArg_ParseTuple(args, "O!O!O!iii",
@@ -75,10 +73,10 @@ static PyObject* recon_loop(PyObject* self, PyObject* args) {
   dim_pa_img[0] = nPixely;
   dim_pa_img[1] = nPixelx;
   p_pa_img = PyArray_ZEROS(2, dim_pa_img, NPY_DOUBLE, 1);
-  pa_data = (double *)PyArray_DATA(p_pa_data);
-  idxAll = (uint64_t *)PyArray_DATA(p_idxAll);
-  angularWeight = (double *)PyArray_DATA(p_angularWeight);
-  pa_img = (double *)PyArray_DATA(p_pa_img);
+  pa_data = (npy_double *)PyArray_DATA(p_pa_data);
+  idxAll = (npy_uint64 *)PyArray_DATA(p_idxAll);
+  angularWeight = (npy_double *)PyArray_DATA(p_angularWeight);
+  pa_img = (npy_double *)PyArray_DATA(p_pa_img);
 
   // call implementation function
   recon_loop_imp(pa_data, idxAll, angularWeight,
@@ -93,15 +91,15 @@ static PyObject* recon_loop(PyObject* self, PyObject* args) {
   return Py_None;
 }
 
-double round(double d) {
+npy_double round(npy_double d) {
   return (d>0.0 ? floor(d+0.5) : floor(d-0.5));
 }
 
 void find_index_map_and_angular_weight_imp
-(const int nSteps, const double *xImg, const double *yImg,
- const double *xReceive, const double *yReceive, const double *delayIdx,
- const double vm, const double fs, const long nSize2D,
- uint64_t *idxAll, double *angularWeight, double *totalAngularWeight) {
+(const int nSteps, const npy_double *xImg, const npy_double *yImg,
+ const npy_double *xReceive, const npy_double *yReceive, const npy_double *delayIdx,
+ const npy_double vm, const npy_double fs, const long nSize2D,
+ npy_uint64 *idxAll, npy_double *angularWeight, npy_double *totalAngularWeight) {
   /* Reference python codes
 def find_index_map_and_angular_weight\
     (nSteps, xImg, yImg, xReceive, yReceive, delayIdx, vm, fs):
@@ -125,7 +123,7 @@ def find_index_map_and_angular_weight\
   */
 
   int n, i;
-  double r0, rr0, dx, dy, cosAlpha;
+  npy_double r0, rr0, dx, dy, cosAlpha;
   for (n=0; n<nSteps; n++) {
     r0 = sqrt(xReceive[n]*xReceive[n] + yReceive[n]*yReceive[n]);
     for (i=0; i<nSize2D; i++) {
@@ -136,7 +134,7 @@ def find_index_map_and_angular_weight\
       cosAlpha = cosAlpha<0.999 ? cosAlpha : 0.999;
       angularWeight[n*nSize2D+i] = cosAlpha / (rr0 * rr0);
       totalAngularWeight[i] += angularWeight[n*nSize2D+i];
-      idxAll[n*nSize2D+i] = (uint64_t)round((rr0/vm - delayIdx[n]) * fs);
+      idxAll[n*nSize2D+i] = (npy_uint64)round((rr0/vm - delayIdx[n]) * fs);
     }
   }
 }
@@ -161,10 +159,10 @@ static PyObject* find_index_map_and_angular_weight(PyObject* self, PyObject* arg
   // PyArrayObject *p_idxAll, *p_angularWeight, *p_totalAngularWeight;
   PyObject *p_idxAll, *p_angularWeight, *p_totalAngularWeight;
   int nSteps;
-  double vm, fs;
-  double *xImg, *yImg, *xReceive, *yReceive, *delayIdx;
-  uint64_t *idxAll;
-  double *angularWeight, *totalAngularWeight;
+  npy_double vm, fs;
+  npy_double *xImg, *yImg, *xReceive, *yReceive, *delayIdx;
+  npy_uint64 *idxAll;
+  npy_double *angularWeight, *totalAngularWeight;
 
   PyObject *returnTuple = PyTuple_New(3);
 
@@ -187,11 +185,11 @@ static PyObject* find_index_map_and_angular_weight(PyObject* self, PyObject* arg
   // TODO: validate array objects
 
   // extract data from array objects
-  xImg = (double *)PyArray_DATA(p_xImg);
-  yImg = (double *)PyArray_DATA(p_yImg);
-  xReceive = (double *)PyArray_DATA(p_xReceive);
-  yReceive = (double *)PyArray_DATA(p_yReceive);
-  delayIdx = (double *)PyArray_DATA(p_delayIdx);
+  xImg = (npy_double *)PyArray_DATA(p_xImg);
+  yImg = (npy_double *)PyArray_DATA(p_yImg);
+  xReceive = (npy_double *)PyArray_DATA(p_xReceive);
+  yReceive = (npy_double *)PyArray_DATA(p_yReceive);
+  delayIdx = (npy_double *)PyArray_DATA(p_delayIdx);
   // building output array objects
   dim_3d[0] = PyArray_SHAPE(p_xImg)[0];
   dim_3d[1] = PyArray_SHAPE(p_xImg)[1];
@@ -201,9 +199,9 @@ static PyObject* find_index_map_and_angular_weight(PyObject* self, PyObject* arg
   p_idxAll = PyArray_ZEROS(3, dim_3d, NPY_UINT64, 1);
   p_angularWeight = PyArray_ZEROS(3, dim_3d, NPY_DOUBLE, 1);
   p_totalAngularWeight = PyArray_ZEROS(2, dim_2d, NPY_DOUBLE, 1);
-  idxAll = (uint64_t *)PyArray_DATA(p_idxAll);
-  angularWeight = (double *)PyArray_DATA(p_angularWeight);
-  totalAngularWeight = (double *)PyArray_DATA(p_totalAngularWeight);
+  idxAll = (npy_uint64 *)PyArray_DATA(p_idxAll);
+  angularWeight = (npy_double *)PyArray_DATA(p_angularWeight);
+  totalAngularWeight = (npy_double *)PyArray_DATA(p_totalAngularWeight);
 
   // Call the implementation
   find_index_map_and_angular_weight_imp
