@@ -11,6 +11,7 @@ from time import time
 from matplotlib import pyplot as plt
 from scipy.signal import hilbert
 
+
 def reconstruction_inline(chn_data_3d, reconOpts):
     """reconstruction function re-implemented according to
     subfunc_reconstruction2_inline.m
@@ -39,49 +40,50 @@ def reconstruction_inline(chn_data_3d, reconOpts):
     nPixelx = xSize * rf
     nPixely = ySize * rf
     # note range is 0-start indices
-    xRange = (np.arange(1,nPixelx+1,1,dtype=np.double)\
-              - nPixelx/2) * xSize / nPixelx + xCenter
-    yRange = (np.arange(nPixely,0,-1,dtype=np.double)\
-              - nPixely/2) * ySize / nPixely + yCenter
-    xImg = np.dot(np.ones((nPixely,1)), xRange.reshape((1,nPixelx)))
-    yImg = np.dot(yRange.reshape((nPixely,1)), np.ones((1,nPixelx)))
+    xRange = (np.arange(1, nPixelx + 1, 1, dtype=np.double)
+              - nPixelx / 2) * xSize / nPixelx + xCenter
+    yRange = (np.arange(nPixely, 0, -1, dtype=np.double)
+              - nPixely / 2) * ySize / nPixely + yCenter
+    xImg = np.dot(np.ones((nPixely, 1)), xRange.reshape((1, nPixelx)))
+    yImg = np.dot(yRange.reshape((nPixely, 1)), np.ones((1, nPixelx)))
     xImg = np.copy(xImg, order='F')
     yImg = np.copy(yImg, order='F')
     # receiver position
     angleStep1 = iniAngle / 180.0 * np.pi
-    detectorAngle = np.arange(0,nSteps,1,dtype=np.double)\
-                    * anglePerStep + angleStep1
+    detectorAngle = np.arange(0, nSteps, 1, dtype=np.double)\
+        * anglePerStep + angleStep1
     xReceive = np.cos(detectorAngle) * R
     yReceive = np.sin(detectorAngle) * R
     # reconstructed image buffer
     reImg = np.zeros((nPixely, nPixelx, zSteps), order='F')
     # use the first z step data to calibrate DAQ delay
-    delayIdx = find_delay_idx(paData[:,:,0], fs)
+    delayIdx = find_delay_idx(paData[:,:, 0], fs)
     # find index map and angular weighting for backprojection
     notifyCli('Calculating geometry dependent backprojection'
-    'parameters')
+              'parameters')
     (idxAll, angularWeight, totalAngularWeight)\
         = find_index_map_and_angular_weight\
         (nSteps, xImg, yImg, xReceive, yReceive, delayIdx, vm, fs)
-    idxAll[idxAll>nSamples] = 1
+    idxAll[idxAll > nSamples] = 1
     # backprojection
     notifyCli('Backprojection starts...')
     for z in range(zSteps):
         # remove DC
-        paDataDC = np.dot(np.ones((nSamples-99,1)),\
-                          np.mean(paData[99:nSamples,:,z],
-                                  axis=0).reshape((1,paData.shape[1])))
-        paData[99:nSamples,:,z] = paData[99:nSamples,:,z] - paDataDC
-        temp = np.copy(paData[:,:,z], order = 'F')
-        paImg = recon_loop(temp, idxAll, angularWeight,\
+        paDataDC = np.dot(np.ones((nSamples - 99, 1)),
+                          np.mean(paData[99:nSamples,:, z],
+                                  axis=0).reshape((1, paData.shape[1])))
+        paData[99:nSamples,:, z] = paData[99:nSamples,:, z] - paDataDC
+        temp = np.copy(paData[:,:, z], order = 'F')
+        paImg = recon_loop(temp, idxAll, angularWeight,
                            nPixelx, nPixely, nSteps)
-        paImg = paImg/totalAngularWeight
+        paImg = paImg / totalAngularWeight
         if paImg == None:
             notifyCli('WARNING: None returned as 2D reconstructed image!')
-        reImg[:,:,z] = paImg
+        reImg[:,:, z] = paImg
         # notifyCli(str(z)+'/'+str(zSteps))
-        update_progress(z+1, zSteps)
+        update_progress(z + 1, zSteps)
     return reImg
+
 
 def save_reconstructed_image(reImg, desDir, ind):
     """save reconstructed image to a specific path and an index"""
@@ -102,6 +104,7 @@ def save_reconstructed_image(reImg, desDir, ind):
     f['reImg'] = reImg
     f.close()
 
+
 @argh.arg('-o', '--opts-path', type=str, help='path to YAML option file')
 @argh.arg('-p', '--path-to-data-folder', type=str, help='path to the data folder')
 def reconstruct(opts_path='default_config_linux.yaml', path_to_data_folder=''):
@@ -121,16 +124,16 @@ def reconstruct(opts_path='default_config_linux.yaml', path_to_data_folder=''):
         opts['extra']['dest_dir'] = destDir
     # normalize paths according to the platform
     opts['extra']['src_dir'] =\
-    os.path.expanduser(os.path.normpath(opts['extra']['src_dir']))
+        os.path.expanduser(os.path.normpath(opts['extra']['src_dir']))
     opts['extra']['dest_dir'] =\
-    os.path.expanduser(os.path.normpath(opts['extra']['dest_dir']))
+        os.path.expanduser(os.path.normpath(opts['extra']['dest_dir']))
     # load data from hdf5 files
     ind = opts['load']['EXP_START']
     if opts['load']['EXP_END'] != -1 and\
        opts['load']['EXP_END'] != ind:
-        notifyCli('WARNING: multiple experiments selected. '\
+        notifyCli('WARNING: multiple experiments selected. '
                   'Only the first dataset will be processed')
-    chn_data, chn_data_3d = load_hdf5_data(\
+    chn_data, chn_data_3d = load_hdf5_data(
         opts['extra']['dest_dir'], ind)
     # check Show_Image and dispatch to the right method
     # currently only 0 is supported
@@ -138,7 +141,7 @@ def reconstruct(opts_path='default_config_linux.yaml', path_to_data_folder=''):
         notifyCli('Currently only Show_Image = 0 is supported.')
     reImg = reconstruction_inline(chn_data_3d, opts['recon'])
     save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind)
-    plt.imshow(reImg[:,:,reImg.shape[2]/2], cmap='gray')
+    plt.imshow(reImg[:,:, reImg.shape[2]/2], cmap='gray')
     plt.show()
 
 if __name__ == '__main__':
