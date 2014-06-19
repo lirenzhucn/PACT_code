@@ -4,6 +4,7 @@ import os
 import argh
 import yaml
 import h5py
+import skimage.io._plugins.freeimage_plugin as fi
 import numpy as np
 from pact_helpers import *
 from recon_loop import recon_loop, find_index_map_and_angular_weight
@@ -85,7 +86,7 @@ def reconstruction_inline(chn_data_3d, reconOpts):
   return reImg
 
 
-def save_reconstructed_image(reImg, desDir, ind):
+def save_reconstructed_image(reImg, desDir, ind, out_format):
   """save reconstructed image to a specific path and an index"""
   if ind == -1:
     # find the largest index in the destination folder
@@ -97,17 +98,25 @@ def save_reconstructed_image(reImg, desDir, ind):
       if matchObj != None:
         indList.append(int(matchObj.group(1)))
     ind = max(indList)
-  fileName = 'reImg_' + str(ind) + '.h5'
-  outPath = os.path.join(desDir, fileName)
-  notifyCli('Saving image data to ' + outPath)
-  f = h5py.File(outPath, 'w')
-  f['reImg'] = reImg
-  f.close()
+  if out_format == 'hdf5':
+    fileName = 'reImg_' + str(ind) + '.h5'
+    outPath = os.path.join(desDir, fileName)
+    notifyCli('Saving image data to ' + outPath)
+    f = h5py.File(outPath, 'w')
+    f['reImg'] = reImg
+    f.close()
+  elif out_format == 'tiff':
+    fileName = 'reImg_' + str(ind) + '.tiff'
+    outPath = os.path.join(desDir, fileName)
+    notifyCli('Saving image data to ' + outPath)
+    imageList = [reImg[:,:,i] for i in range(reImg.shape[2])]
+    fi.write_multipage(imageList, outPath)
 
-
+@argh.arg('-f', '--out-format', type=str, help='Output format. hdf5 or tiff')
 @argh.arg('-o', '--opts-path', type=str, help='path to YAML option file')
 @argh.arg('-p', '--path-to-data-folder', type=str, help='path to the data folder')
-def reconstruct(opts_path='default_config_linux.yaml', path_to_data_folder=''):
+def reconstruct(out_format='hdf5', opts_path='default_config_linux.yaml',
+                path_to_data_folder=''):
   """reconstruction from channel data
   This is the command line interface of the reconstruction
   part. This function takes the path to the option file as an
@@ -115,6 +124,12 @@ def reconstruct(opts_path='default_config_linux.yaml', path_to_data_folder=''):
   and so on, calls reconstruct_inline to do the reconstruction, and
   finally save and display the reconstructed images.
   """
+  # checking out_format argument
+  SUPPORTED_OUT_FORMATS = ['hdf5', 'tiff']
+  if not (out_format in SUPPORTED_OUT_FORMATS):
+    notifyCli('Unsupported output format: ' + out_format)
+    return
+
   opts = loadOptions(opts_path)
   if path_to_data_folder != '':
     # put user defined path to data folder and unpack folder to opt struct.
@@ -140,7 +155,7 @@ def reconstruct(opts_path='default_config_linux.yaml', path_to_data_folder=''):
   if opts['unpack']['Show_Image'] != 0:
     notifyCli('Currently only Show_Image = 0 is supported.')
   reImg = reconstruction_inline(chn_data_3d, opts['recon'])
-  save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind)
+  save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind, out_format)
   plt.imshow(reImg[:,:, reImg.shape[2]/2], cmap='gray')
   plt.show()
 
