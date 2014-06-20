@@ -33,7 +33,10 @@ def renameUnindexedFile(srcDir):
     notifyCli('No unindexed file found!')
     return -1
   # target index is max index + 1
-  renameIndex = max(indexList) + 1
+  if not indexList:
+    renameIndex = 1
+  else:
+    renameIndex = max(indexList) + 1
   for fileName in targetFileList:
     srcFilePath = os.path.join(srcDir, fileName)
     destFilePath = srcFilePath[:-4] + '_' +\

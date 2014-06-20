@@ -7,7 +7,6 @@ from time import time
 from pact_helpers import *
 
 import pycuda.autoinit
-# import pycuda.gpuarray as gpuarray
 import pycuda.driver as cuda
 from pycuda.compiler import SourceModule
 
@@ -93,25 +92,6 @@ def reconstruction_3d(paData, reconOpts):
   et_all = time()
   notifyCli('Total time elapsed: {:.2f} mins'.format((et_all-st_all)/60.0))
   return reImg
-
-def save_reconstructed_image(reImg, desDir, ind):
-  """save reconstructed image to a specific path and an index"""
-  if ind == -1:
-    # find the largest index in the destination folder
-    fileNameList = os.listdir(desDir)
-    pattern = re.compile(r'chndata_([0-9]+).h5')
-    indList = []
-    for fileName in fileNameList:
-      matchObj = pattern.match(fileName)
-      if matchObj != None:
-        indList.append(int(matchObj.group(1)))
-    ind = max(indList)
-  fileName = 'reImg_' + str(ind) + '_3D.h5'
-  outPath = os.path.join(desDir, fileName)
-  notifyCli('Saving image data to ' + outPath)
-  f = h5py.File(outPath, 'w')
-  f['reImg'] = reImg
-  f.close()
 
 @argh.arg('opts_path', type=str, help='path to YAML option file')
 def reconstruct(opts_path):

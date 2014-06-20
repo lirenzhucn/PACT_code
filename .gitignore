@@ -2,4 +2,5 @@ build
 *.pyd
 *.pyc
 *.so
+*.swp
 unpack_speedup.c

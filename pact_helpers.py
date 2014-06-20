@@ -61,6 +61,32 @@ def load_hdf5_data(desDir, ind):
   return (np.array(f['chndata'], order='F'),\
           np.array(f['chndata_all'], order='F'))
 
+def save_reconstructed_image(reImg, desDir, ind, out_format):
+  """save reconstructed image to a specific path and an index"""
+  if ind == -1:
+    # find the largest index in the destination folder
+    fileNameList = os.listdir(desDir)
+    pattern = re.compile(r'chndata_([0-9]+).h5')
+    indList = []
+    for fileName in fileNameList:
+      matchObj = pattern.match(fileName)
+      if matchObj != None:
+        indList.append(int(matchObj.group(1)))
+    ind = max(indList)
+  if out_format == 'hdf5':
+    fileName = 'reImg_' + str(ind) + '.h5'
+    outPath = os.path.join(desDir, fileName)
+    notifyCli('Saving image data to ' + outPath)
+    f = h5py.File(outPath, 'w')
+    f['reImg'] = reImg
+    f.close()
+  elif out_format == 'tiff':
+    fileName = 'reImg_' + str(ind) + '.tiff'
+    outPath = os.path.join(desDir, fileName)
+    notifyCli('Saving image data to ' + outPath)
+    imageList = [reImg[:,:,i] for i in range(reImg.shape[2])]
+    fi.write_multipage(imageList, outPath)
+
 def find_delay_idx(paData, fs):
   """find the delay value from the first few samples on
   A-lines"""
