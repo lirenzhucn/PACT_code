@@ -4,7 +4,6 @@ import os
 import argh
 import yaml
 import h5py
-import skimage.io._plugins.freeimage_plugin as fi
 import numpy as np
 from pact_helpers import *
 from recon_loop import recon_loop, find_index_map_and_angular_weight

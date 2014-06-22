@@ -5,6 +5,7 @@ import os
 import re
 import h5py
 import scipy.signal as spsig
+import skimage.io._plugins.freeimage_plugin as fi
 
 def notifyCli(msg):
   print msg
