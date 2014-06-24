@@ -68,8 +68,6 @@ def reconstruction_3d(paData, reconOpts):
   delayIdx = delayIdx.astype(np.float32)
   # rearrange paData array according to firing order
   notifyCli('Re-arranging raw RF data according to firing squence')
-  # DEBUGGING
-  paData = paData.astype(np.float32)
   paData, pulseList, numGroup = rearrange_pa_data(paData)
   nSamples, nSteps, zSteps = paData.shape
   # notice the z step size is divided by firing group count
@@ -79,8 +77,7 @@ def reconstruction_3d(paData, reconOpts):
     notifyCli('Extracting envelope of A-line signals')
     paData = np.abs(hilbert(paData, axis=0))
     paData = paData.astype(np.float32)
-  # notice nSteps is now 64!!
-  anglePerStep = 2*np.pi/nSteps/numGroup
+  anglePerStep = 2*np.pi/nSteps
   nPixelx = int(xSize * rf)
   nPixely = int(ySize * rf)
   nPixelz = int(zSize * zrf)
@@ -97,7 +94,9 @@ def reconstruction_3d(paData, reconOpts):
                   * anglePerStep + angleStep1
   xReceive = np.cos(detectorAngle) * R
   yReceive = np.sin(detectorAngle) * R
-  zReceive = np.arange(0,zSteps,dtype=np.float32) * zPerStep
+  # DEBUGGING
+  #zReceive = np.arange(0,zSteps,dtype=np.float32) * zPerStep
+  zReceive = np.arange(0,zSteps/numGroup,dtype=np.float32)*zPerStep*numGroup
   # create buffer on GPU for reconstructed image
   reImg = np.zeros((nPixely, nPixelx, nPixelz), order='C', dtype=np.float32)
   d_reImg = cuda.mem_alloc(nPixely*nPixelx*nPixelz*4)

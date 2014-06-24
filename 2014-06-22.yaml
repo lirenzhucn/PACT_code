@@ -46,7 +46,7 @@ recon:
   # y_size:            15
   x_size:            25   # recon. image size
   y_size:            25
-  z_size:            3
+  z_size:            9
   resolution_factor: 20   # dxy = 1.0 mm / r.f.
   center_x:          0    # center of image
   # center_y:          -10
