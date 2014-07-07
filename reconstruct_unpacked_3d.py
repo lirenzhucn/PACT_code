@@ -156,7 +156,8 @@ def reconstruct(opts_path):
   if opts['unpack']['Show_Image'] != 0:
     notifyCli('Currently only Show_Image = 0 is supported.')
   reImg = reconstruction_3d(chn_data_3d, opts['recon'])
-  save_reconstructed_image(reImg, opts['extra']['dest_dir'], ind, 'tiff')
+  save_reconstructed_image(reImg, opts['extra']['dest_dir'],
+                           ind, 'tiff', '_3d')
 
 if __name__ == '__main__':
   argh.dispatch_command(reconstruct)

@@ -62,7 +62,7 @@ def load_hdf5_data(desDir, ind):
   return (np.array(f['chndata'], order='F'),\
           np.array(f['chndata_all'], order='F'))
 
-def save_reconstructed_image(reImg, desDir, ind, out_format):
+def save_reconstructed_image(reImg, desDir, ind, out_format, sufix=''):
   """save reconstructed image to a specific path and an index"""
   if ind == -1:
     # find the largest index in the destination folder
@@ -82,7 +82,7 @@ def save_reconstructed_image(reImg, desDir, ind, out_format):
     f['reImg'] = reImg
     f.close()
   elif out_format == 'tiff':
-    fileName = 'reImg_' + str(ind) + '.tiff'
+    fileName = 'reImg_' + str(ind) + sufix + '.tiff'
     outPath = os.path.join(desDir, fileName)
     notifyCli('Saving image data to ' + outPath)
     imageList = [reImg[:,:,i] for i in range(reImg.shape[2])]

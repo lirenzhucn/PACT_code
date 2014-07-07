@@ -1,17 +1,17 @@
 ---
 description:         PACT unpack_data.m configuration file
 version:             1.0
-date:                2014-06-22
+date:                2014-07-03
 
 extra:
   save_raw:          true
-  src_dir:           ~/Documents/Project_data/PACT_data/2014-06-22
-  dest_dir:          ~/Documents/Project_data/PACT_data/2014-06-22/unpack
+  src_dir:           ~/Documents/Project_data/PACT_data/2014-07-03
+  dest_dir:          ~/Documents/Project_data/PACT_data/2014-07-03/unpack
   dtype:             <u4 # unsigned integer 32-bit, little endian (Windows)
 
 load:
-  EXP_START:         1
-  EXP_END:           1
+  EXP_START:         9
+  EXP_END:           9
   NUM_EXP:           -1
 
 unpack:
@@ -50,7 +50,7 @@ recon:
   resolution_factor: 20   # dxy = 1.0 mm / r.f.
   center_x:          0    # center of image
   # center_y:          -10
-  center_y:          0
+  center_y:          -5
   fs:                40   # sampling frequency in MHz
   R:                 25   # radius of the ring array (mm)
   Len_R:             19.8 # focal length (mm)
