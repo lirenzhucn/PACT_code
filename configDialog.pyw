@@ -6,8 +6,10 @@ from os.path import normpath, expanduser
 from ui_configDialog import Ui_ConfigDialog
 
 class ConfigDialog(QtGui.QDialog):
+
   DONE = 0
   CANCELED = 1
+
   def __init__(self, parent=None):
     '''constructor'''
     super(ConfigDialog, self).__init__(parent)
@@ -28,6 +30,7 @@ class ConfigDialog(QtGui.QDialog):
     self.ui.mBtnCancel.clicked.connect(self.onCancel)
     self.ui.mBtnUnpack.clicked.connect(self.onUnpack)
     self.ui.mBtnChooseInput.clicked.connect(self.onChooseInput)
+
   def setOpts(self):
     '''set self.opts dict according to user input'''
     # object variables
@@ -81,15 +84,18 @@ class ConfigDialog(QtGui.QDialog):
     self.opts['recon']['R'] = self.ui.mSpnR.value()
     self.opts['recon']['Len_R'] = self.ui.mSpnLenR.value()
     self.opts['recon']['z_per_step'] = self.ui.mSpnZPerStep.value()
+
   @QtCore.pyqtSlot()
   def onUnpack(self):
     '''called when OK is pressed'''
     self.setOpts()
     self.done(self.DONE)
+
   @QtCore.pyqtSlot()
   def onCancel(self):
     '''called when Cancel is pressed'''
     self.done(self.CANCELED)
+
   @QtCore.pyqtSlot()
   def onChooseInput(self):
     '''called when Choose button is pressed in the Input group'''
