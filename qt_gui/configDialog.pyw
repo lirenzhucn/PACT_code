@@ -1,24 +1,46 @@
 #!/usr/bin/env python
 
 from PyQt4 import QtCore, QtGui
+from os.path import normpath, expanduser
 
 from ui_configDialog import Ui_ConfigDialog
 
-import json
-
 class ConfigDialog(QtGui.QDialog):
+  DONE = 0
+  CANCELED = 1
   def __init__(self, parent=None):
+    '''constructor'''
     super(ConfigDialog, self).__init__(parent)
     self.ui = Ui_ConfigDialog()
     self.ui.setupUi(self)
+    # set initial input directory
+    initPath = expanduser(normpath(r'~/Docments'))
+    self.ui.mEditInputDir.setText(initPath)
     # initialize opts dict
     self.opts = {}
+    self.opts['extra'] = {}
+    self.opts['load'] = {}
     self.opts['unpack'] = {}
     self.opts['display'] = {}
     self.opts['recon'] = {}
     self.setOpts()
+    # connecting signals to slots
+    self.ui.mBtnCancel.clicked.connect(self.onCancel)
+    self.ui.mBtnUnpack.clicked.connect(self.onUnpack)
+    self.ui.mBtnChooseInput.clicked.connect(self.onChooseInput)
   def setOpts(self):
+    '''set self.opts dict according to user input'''
     # object variables
+    # extra section
+    self.opts['extra']['save_raw'] = True
+    self.opts['extra']['src_dir'] = str(self.ui.mEditInputDir.text())
+    self.opts['extra']['dest_dir'] =\
+        normpath(self.opts['extra']['src_dir'] + '/unpack')
+    self.opts['extra']['dtype'] = r'<u4'
+    # load section
+    self.opts['load']['EXP_START'] = int(self.ui.mEditInputIndex.text())
+    self.opts['load']['EXP_END'] = int(self.ui.mEditInputIndex.text())
+    self.opts['load']['NUM_EXP'] = -1
     # unpack section
     self.opts['unpack']['Show_Image'] = 0
     self.opts['unpack']['NumBoards'] = self.ui.mLstBoardNames.count()
@@ -59,17 +81,28 @@ class ConfigDialog(QtGui.QDialog):
     self.opts['recon']['R'] = self.ui.mSpnR.value()
     self.opts['recon']['Len_R'] = self.ui.mSpnLenR.value()
     self.opts['recon']['z_per_step'] = self.ui.mSpnZPerStep.value()
-    # print the dict as a json string
-    #print json.dumps(self.opts)
-  def accept(self):
+  @QtCore.pyqtSlot()
+  def onUnpack(self):
+    '''called when OK is pressed'''
     self.setOpts()
-    self.done(0)
-  def reject(self):
-    self.done(0)
+    self.done(self.DONE)
+  @QtCore.pyqtSlot()
+  def onCancel(self):
+    '''called when Cancel is pressed'''
+    self.done(self.CANCELED)
+  @QtCore.pyqtSlot()
+  def onChooseInput(self):
+    '''called when Choose button is pressed in the Input group'''
+    path = str(self.ui.mEditInputDir.text())
+    path = QtGui.QFileDialog.getExistingDirectory\
+        (self, "Input directory", path)
+    self.ui.mEditInputDir.setText(path)
 
 if __name__ == '__main__':
   import sys
   app = QtGui.QApplication(sys.argv)
   configDialog = ConfigDialog()
-  sys.exit(configDialog.exec_())
+  ret = configDialog.exec_()
+  #print configDialog.opts
+  sys.exit(ret)
 
