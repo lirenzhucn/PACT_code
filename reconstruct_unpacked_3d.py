@@ -6,14 +6,13 @@ import numpy as np
 from time import time
 from pact_helpers import *
 
-import pycuda.autoinit
+#import pycuda.autoinit
 import pycuda.driver as cuda
 from pycuda.compiler import SourceModule
 from scipy.signal import hilbert
 from StringIO import StringIO
 
 KERNEL_CU_FILE = 'reconstruct_3d_kernel.cu'
-MOD = SourceModule(open(KERNEL_CU_FILE, 'r').read())
 PULSE_STR = """
 129 133 137 141 145 149 153 157 161 165 169 173 177 181 185 189 385 389 393 397 401 405 409 413 417 421 425 429 433 437 441 445 257 261 265 269 273 277 281 285 289 293 297 301 305 309 313 317 1 5 9 13 17 21 25 29 33 37 41 45 49 53 57 61
 130 134 138 142 146 150 154 158 162 166 170 174 178 182 186 190 386 390 394 398 402 406 410 414 418 422 426 430 434 438 442 446 258 262 266 270 274 278 282 286 290 294 298 302 306 310 314 318 2 6 10 14 18 22 26 30 34 38 42 46 50 54 58 62
@@ -44,7 +43,7 @@ def rearrange_pa_data(paData):
       paDataE[:,:,zi*numGroup+fi] = paData[:,pulseList[fi,:],zi]
   return paDataE, pulseList, numGroup
 
-def reconstruction_3d(paData, reconOpts):
+def reconstruction_3d(paData, reconOpts, progress=update_progress_with_time):
   """3D reconstruction algorithm
   see Jun's focal-line reconstruction paper and codes for details
   """
@@ -110,6 +109,8 @@ def reconstruction_3d(paData, reconOpts):
   cuda.memcpy_htod(d_yRange, yRange)
   d_zRange = cuda.mem_alloc(zRange.nbytes)
   cuda.memcpy_htod(d_zRange, zRange)
+  # get module right before execution of function
+  MOD = SourceModule(open(KERNEL_CU_FILE, 'r').read())
   bpk = MOD.get_function('backprojection_kernel')
   d_paDataLine = cuda.mem_alloc(nSamples*4)
   st_all = time()
@@ -129,11 +130,20 @@ def reconstruction_3d(paData, reconOpts):
     et = time()
     # use the execution time of the last loop to guess the remaining time
     time_remaining = ((zSteps - zi) * (et - st)) / 60.0
-    update_progress_with_time(zi+1, zSteps, time_remaining)
+    #update_progress_with_time(zi+1, zSteps, time_remaining)
+    progress(zi+1, zSteps, time_remaining)
   cuda.memcpy_dtoh(reImg, d_reImg)
   et_all = time()
   notifyCli('Total time elapsed: {:.2f} mins'.format((et_all-st_all)/60.0))
   return reImg
+
+def reconstruct_3d(opts, progress=update_progress_with_time):
+  '''interface function for other python scripts such as Qt applications'''
+  ind = opts['load']['EXP_START']
+  chn_data, chn_data_3d = load_hdf5_data(opts['extra']['dest_dir'], ind)
+  reImg = reconstruction_3d(chn_data_3d, opts['recon'], progress)
+  save_reconstructed_image(reImg, opts['extra']['dest_dir'],\
+                           ind, opts['recon']['out_format'], '_3d')
 
 @argh.arg('opts_path', type=str, help='path to YAML option file')
 def reconstruct(opts_path):
@@ -155,7 +165,13 @@ def reconstruct(opts_path):
     opts['extra']['dest_dir'], ind)
   if opts['unpack']['Show_Image'] != 0:
     notifyCli('Currently only Show_Image = 0 is supported.')
+  # initialize pyCuda environment
+  cuda.init()
+  dev = cuda.Device(0)
+  ctx = dev.make_context()
   reImg = reconstruction_3d(chn_data_3d, opts['recon'])
+  ctx.pop()
+  del ctx
   save_reconstructed_image(reImg, opts['extra']['dest_dir'],
                            ind, 'tiff', '_3d')
 
