@@ -141,7 +141,13 @@ def reconstruct_3d(opts, progress=update_progress_with_time):
   '''interface function for other python scripts such as Qt applications'''
   ind = opts['load']['EXP_START']
   chn_data, chn_data_3d = load_hdf5_data(opts['extra']['dest_dir'], ind)
+  # initialize pycuda properly
+  cuda.init()
+  dev = cuda.Device(0)
+  ctx = dev.make_context()
   reImg = reconstruction_3d(chn_data_3d, opts['recon'], progress)
+  ctx.pop()
+  del ctx
   save_reconstructed_image(reImg, opts['extra']['dest_dir'],\
                            ind, opts['recon']['out_format'], '_3d')
 

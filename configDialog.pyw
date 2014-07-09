@@ -8,6 +8,7 @@ import os
 from ui_configDialog import Ui_ConfigDialog
 from unpack_data import unpack
 from reconstruct_unpacked import reconstruct_2d
+from reconstruct_unpacked_3d import reconstruct_3d
 from pact_helpers import *
 
 import yaml
@@ -51,6 +52,17 @@ class ReconstructThread(QtCore.QThread):
   def run(self):
     reconstruct_2d(self.opts, progress=self.progressHandler)
 
+class Reconstruct3DThread(QtCore.QThread):
+  '''the thread class for reconstruct 3d function'''
+  reconstruct3dProgressSignal = QtCore.pyqtSignal(int, int, float)
+  def __init__(self, opts):
+    QtCore.QThread.__init__(self)
+    self.opts = opts
+  def progressHandler(self, current, total, timeRemaining):
+    self.reconstruct3dProgressSignal.emit(current, total, timeRemaining)
+  def run(self):
+    reconstruct_3d(self.opts, progress = self.progressHandler)
+
 class ConfigDialog(QtGui.QDialog):
   def __init__(self, parent=None):
     '''constructor'''
@@ -77,10 +89,12 @@ class ConfigDialog(QtGui.QDialog):
     # initialize threads
     self.unpackThread = UnpackThread(self.opts)
     self.reconstructThread = ReconstructThread(self.opts)
+    self.reconstruct3DThread = Reconstruct3DThread(self.opts)
     # connecting UI signals to slots
     self.ui.mBtnClose.clicked.connect(self.onClose)
     self.ui.mBtnUnpack.clicked.connect(self.onUnpack)
     self.ui.mBtnReconstruct.clicked.connect(self.onReconstruct)
+    self.ui.mBtnReconstruct3D.clicked.connect(self.onReconstruct3D)
     self.ui.mBtnChooseInput.clicked.connect(self.onChooseInput)
     # connecting work thread signals to slots
     self.unpackThread.terminated.connect(self.workThreadTerminated)
@@ -89,6 +103,10 @@ class ConfigDialog(QtGui.QDialog):
     self.reconstructThread.finished.connect(self.workThreadFinished)
     self.reconstructThread.reconstructProgressSignal.connect\
         (self.updateProgress)
+    self.reconstruct3DThread.terminated.connect(self.workThreadTerminated)
+    self.reconstruct3DThread.finished.connect(self.workThreadFinished)
+    self.reconstruct3DThread.reconstruct3dProgressSignal.connect\
+        (self.updateProgressWithTime)
 
   @QtCore.pyqtSlot()
   def workThreadFinished(self):
@@ -107,6 +125,16 @@ class ConfigDialog(QtGui.QDialog):
   def updateProgress(self, current, total):
     progress = int(float(current)/float(total)*100)
     self.ui.mProgress.setValue(progress)
+
+  @QtCore.pyqtSlot(int, int, float)
+  def updateProgressWithTime(self, current, total, timeRemaining):
+    progress = int(float(current)/float(total)*100)
+    self.ui.mProgress.setValue(progress)
+    if progress == 100:
+      self.ui.mStatusBar.setText('Ready')
+    else:
+      msg = '{:.2f} min remaining'.format(timeRemaining)
+      self.ui.mStatusBar.setText(msg)
 
   def setOpts(self):
     '''set self.opts dict according to user input'''
@@ -176,6 +204,13 @@ class ConfigDialog(QtGui.QDialog):
     self.setOpts()
     self.reconstructThread.opts = self.opts
     self.reconstructThread.start()
+
+  @QtCore.pyqtSlot()
+  def onReconstruct3D(self):
+    '''called when Reconstruct3D is pressed'''
+    self.setOpts()
+    self.reconstruct3DThread.opts = self.opts
+    self.reconstruct3DThread.start()
 
   @QtCore.pyqtSlot()
   def onClose(self):

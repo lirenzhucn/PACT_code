@@ -832,6 +832,12 @@
       <height>22</height>
      </rect>
     </property>
+    <property name="minimum">
+     <number>-50</number>
+    </property>
+    <property name="maximum">
+     <number>50</number>
+    </property>
    </widget>
    <widget class="QLabel" name="lb22">
     <property name="geometry">
@@ -854,6 +860,12 @@
       <width>51</width>
       <height>22</height>
      </rect>
+    </property>
+    <property name="minimum">
+     <number>-50</number>
+    </property>
+    <property name="maximum">
+     <number>50</number>
     </property>
    </widget>
    <widget class="QLabel" name="lb23">
@@ -1124,7 +1136,7 @@
   <widget class="QPushButton" name="mBtnReconstruct">
    <property name="geometry">
     <rect>
-     <x>110</x>
+     <x>100</x>
      <y>680</y>
      <width>75</width>
      <height>31</height>
@@ -1140,7 +1152,7 @@
   <widget class="QPushButton" name="mBtnClose">
    <property name="geometry">
     <rect>
-     <x>300</x>
+     <x>320</x>
      <y>680</y>
      <width>75</width>
      <height>31</height>
@@ -1157,9 +1169,9 @@
    <property name="geometry">
     <rect>
      <x>410</x>
-     <y>10</y>
+     <y>40</y>
      <width>461</width>
-     <height>661</height>
+     <height>631</height>
     </rect>
    </property>
    <property name="font">
@@ -1183,6 +1195,46 @@
    </property>
    <property name="value">
     <number>0</number>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="mBtnReconstruct3D">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>680</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Reconstruct 3D</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="mStatusBar">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>10</y>
+     <width>461</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Consolas</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Sunken</enum>
+   </property>
+   <property name="text">
+    <string>Ready</string>
    </property>
   </widget>
  </widget>
