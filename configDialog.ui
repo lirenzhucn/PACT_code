@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>882</width>
     <height>723</height>
    </rect>
   </property>
@@ -693,7 +693,7 @@
      <string>x size</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="mSpnXSize">
+   <widget class="QSpinBox" name="mSpnXSize">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -702,11 +702,8 @@
       <height>22</height>
      </rect>
     </property>
-    <property name="decimals">
-     <number>1</number>
-    </property>
     <property name="value">
-     <double>25.000000000000000</double>
+     <number>25</number>
     </property>
    </widget>
    <widget class="QLabel" name="lb15">
@@ -748,7 +745,7 @@
      <string>mm</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="mSpnYSize">
+   <widget class="QSpinBox" name="mSpnYSize">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -757,11 +754,8 @@
       <height>22</height>
      </rect>
     </property>
-    <property name="decimals">
-     <number>1</number>
-    </property>
     <property name="value">
-     <double>25.000000000000000</double>
+     <number>25</number>
     </property>
    </widget>
    <widget class="QLabel" name="lb18">
@@ -790,7 +784,7 @@
      <string>mm</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="mSpnZSize">
+   <widget class="QSpinBox" name="mSpnZSize">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -799,11 +793,8 @@
       <height>22</height>
      </rect>
     </property>
-    <property name="decimals">
-     <number>1</number>
-    </property>
     <property name="value">
-     <double>9.000000000000000</double>
+     <number>9</number>
     </property>
    </widget>
    <widget class="QLabel" name="lb20">
@@ -832,7 +823,7 @@
      <string>mm</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="mSpnXCenter">
+   <widget class="QSpinBox" name="mSpnXCenter">
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -840,18 +831,6 @@
       <width>51</width>
       <height>22</height>
      </rect>
-    </property>
-    <property name="decimals">
-     <number>1</number>
-    </property>
-    <property name="minimum">
-     <double>-50.000000000000000</double>
-    </property>
-    <property name="maximum">
-     <double>50.000000000000000</double>
-    </property>
-    <property name="value">
-     <double>0.000000000000000</double>
     </property>
    </widget>
    <widget class="QLabel" name="lb22">
@@ -867,7 +846,7 @@
      <string>y center</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="mSpnYCenter">
+   <widget class="QSpinBox" name="mSpnYCenter">
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -875,18 +854,6 @@
       <width>51</width>
       <height>22</height>
      </rect>
-    </property>
-    <property name="decimals">
-     <number>1</number>
-    </property>
-    <property name="minimum">
-     <double>-50.000000000000000</double>
-    </property>
-    <property name="maximum">
-     <double>50.000000000000000</double>
-    </property>
-    <property name="value">
-     <double>0.000000000000000</double>
     </property>
    </widget>
    <widget class="QLabel" name="lb23">
@@ -960,7 +927,7 @@
      <string>Ring radius</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="mSpnR">
+   <widget class="QSpinBox" name="mSpnR">
     <property name="geometry">
      <rect>
       <x>280</x>
@@ -969,17 +936,8 @@
       <height>22</height>
      </rect>
     </property>
-    <property name="decimals">
-     <number>1</number>
-    </property>
-    <property name="minimum">
-     <double>0.000000000000000</double>
-    </property>
-    <property name="maximum">
-     <double>50.000000000000000</double>
-    </property>
     <property name="value">
-     <double>25.000000000000000</double>
+     <number>25</number>
     </property>
    </widget>
    <widget class="QLabel" name="lb27">
@@ -1193,6 +1151,25 @@
    </property>
    <property name="default">
     <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="mEditLog">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>10</y>
+     <width>461</width>
+     <height>701</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Consolas</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>
