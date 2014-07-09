@@ -76,13 +76,21 @@ def reconstruction_inline(chn_data_3d, reconOpts):
     temp = np.copy(paData[:,:, z], order = 'F')
     paImg = recon_loop(temp, idxAll, angularWeight,
                        nPixelx, nPixely, nSteps)
-    paImg = paImg / totalAngularWeight
     if paImg == None:
       notifyCli('WARNING: None returned as 2D reconstructed image!')
+    paImg = paImg / totalAngularWeight
     reImg[:,:, z] = paImg
     # notifyCli(str(z)+'/'+str(zSteps))
     update_progress(z + 1, zSteps)
   return reImg
+
+def reconstruct_2d(opts):
+  dest_dir = opts['extra']['dest_dir']
+  ind = opts['load']['EXP_START']
+  chn_data, chn_data_3d = load_hdf5_data(dest_dir, ind)
+  reImg = reconstruction_inline(chn_data_3d, opts['recon'])
+  out_format = opts['recon']['out_format']
+  save_reconstructed_image(reImg, dest_dir, ind, out_format)
 
 @argh.arg('-f', '--out-format', type=str, help='Output format. hdf5 or tiff')
 @argh.arg('-o', '--opts-path', type=str, help='path to YAML option file')
