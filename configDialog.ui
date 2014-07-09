@@ -1137,7 +1137,7 @@
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="mBtnCancel">
+  <widget class="QPushButton" name="mBtnClose">
    <property name="geometry">
     <rect>
      <x>300</x>
@@ -1147,7 +1147,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Cancel</string>
+    <string>Close</string>
    </property>
    <property name="default">
     <bool>false</bool>
@@ -1159,7 +1159,7 @@
      <x>410</x>
      <y>10</y>
      <width>461</width>
-     <height>701</height>
+     <height>661</height>
     </rect>
    </property>
    <property name="font">
@@ -1170,6 +1170,19 @@
    </property>
    <property name="readOnly">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QProgressBar" name="mProgress">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>680</y>
+     <width>461</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="value">
+    <number>0</number>
    </property>
   </widget>
  </widget>

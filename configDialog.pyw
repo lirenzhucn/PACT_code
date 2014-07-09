@@ -42,11 +42,14 @@ class UnpackThread(QtCore.QThread):
 
 class ReconstructThread(QtCore.QThread):
   '''the thread class for reconstruct function'''
+  reconstructProgressSignal = QtCore.pyqtSignal(int, int)
   def __init__(self, opts):
     QtCore.QThread.__init__(self)
     self.opts = opts
+  def progressHandler(self, current, total):
+    self.reconstructProgressSignal.emit(current, total)
   def run(self):
-    reconstruct_2d(self.opts)
+    reconstruct_2d(self.opts, progress=self.progressHandler)
 
 class ConfigDialog(QtGui.QDialog):
   def __init__(self, parent=None):
@@ -74,15 +77,18 @@ class ConfigDialog(QtGui.QDialog):
     # initialize threads
     self.unpackThread = UnpackThread(self.opts)
     self.reconstructThread = ReconstructThread(self.opts)
-    # connecting signals to slots
-    self.ui.mBtnCancel.clicked.connect(self.onCancel)
+    # connecting UI signals to slots
+    self.ui.mBtnClose.clicked.connect(self.onClose)
     self.ui.mBtnUnpack.clicked.connect(self.onUnpack)
     self.ui.mBtnReconstruct.clicked.connect(self.onReconstruct)
     self.ui.mBtnChooseInput.clicked.connect(self.onChooseInput)
+    # connecting work thread signals to slots
     self.unpackThread.terminated.connect(self.workThreadTerminated)
     self.unpackThread.finished.connect(self.workThreadFinished)
     self.reconstructThread.terminated.connect(self.workThreadTerminated)
     self.reconstructThread.finished.connect(self.workThreadFinished)
+    self.reconstructThread.reconstructProgressSignal.connect\
+        (self.updateProgress)
 
   @QtCore.pyqtSlot()
   def workThreadFinished(self):
@@ -96,6 +102,11 @@ class ConfigDialog(QtGui.QDialog):
   def logText(self, text):
     self.ui.mEditLog.moveCursor(QtGui.QTextCursor.End)
     self.ui.mEditLog.insertPlainText(text)
+
+  @QtCore.pyqtSlot(int, int)
+  def updateProgress(self, current, total):
+    progress = int(float(current)/float(total)*100)
+    self.ui.mProgress.setValue(progress)
 
   def setOpts(self):
     '''set self.opts dict according to user input'''
@@ -167,8 +178,8 @@ class ConfigDialog(QtGui.QDialog):
     self.reconstructThread.start()
 
   @QtCore.pyqtSlot()
-  def onCancel(self):
-    '''called when Cancel is pressed'''
+  def onClose(self):
+    '''called when Close is pressed'''
     self.done(0)
 
   @QtCore.pyqtSlot()
