@@ -59,8 +59,10 @@ def load_hdf5_data(desDir, ind):
   inputPath = os.path.join(desDir, fileName)
   notifyCli('Opening data from ' + inputPath)
   f = h5py.File(inputPath, 'r')
-  return (np.array(f['chndata'], order='F'),\
-          np.array(f['chndata_all'], order='F'))
+  chndata = np.array(f['chndata'], order='F') 
+  chndata_all = np.array(f['chndata_all'], order='F')
+  f.close()
+  return (chndata, chndata_all)
 
 def save_reconstructed_image(reImg, desDir, ind, out_format, sufix=''):
   """save reconstructed image to a specific path and an index"""
