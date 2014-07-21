@@ -78,6 +78,9 @@ def reconstruction_3d(paData, reconOpts, progress=update_progress_with_time):
     notifyCli('Extracting envelope of A-line signals')
     paData = np.abs(hilbert(paData, axis=0))
     paData = paData.astype(np.float32)
+  elif algorithm == 'exact':
+    notifyCli('Filtered backprojection')
+    # TODO: impelement the 'exact' algorithm
   # notice nSteps is now 64!!
   anglePerStep = 2*np.pi/nSteps/numGroup
   nPixelx = int(xSize * rf)
