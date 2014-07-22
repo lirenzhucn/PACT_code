@@ -93,6 +93,7 @@ class ConfigDialog(QtGui.QDialog):
     self.ui.mBtnReconstruct.clicked.connect(self.onReconstruct)
     self.ui.mBtnReconstruct3D.clicked.connect(self.onReconstruct3D)
     self.ui.mBtnChooseInput.clicked.connect(self.onChooseInput)
+    self.ui.mBtnClearLog.clicked.connect(self.onClearLog)
     # connecting work thread signals to slots
     self.unpackThread.terminated.connect(self.workThreadTerminated)
     self.unpackThread.finished.connect(self.workThreadFinished)
@@ -104,6 +105,10 @@ class ConfigDialog(QtGui.QDialog):
     self.reconstruct3DThread.finished.connect(self.workThreadFinished)
     self.reconstruct3DThread.reconstruct3dProgressSignal.connect\
         (self.updateProgressWithTime)
+
+  @QtCore.pyqtSlot()
+  def onClearLog(self):
+    self.ui.mEditLog.clear()
 
   @QtCore.pyqtSlot()
   def workThreadFinished(self):
