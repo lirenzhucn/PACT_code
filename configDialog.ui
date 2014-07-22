@@ -1171,7 +1171,7 @@
      <x>410</x>
      <y>40</y>
      <width>461</width>
-     <height>591</height>
+     <height>161</height>
     </rect>
    </property>
    <property name="font">
@@ -1240,8 +1240,8 @@
   <widget class="QPushButton" name="mBtnClearLog">
    <property name="geometry">
     <rect>
-     <x>744</x>
-     <y>642</y>
+     <x>740</x>
+     <y>210</y>
      <width>131</width>
      <height>31</height>
     </rect>
@@ -1253,7 +1253,25 @@
     <bool>false</bool>
    </property>
   </widget>
+  <widget class="ImageSliceDisplay" name="mImageDisplay" native="true">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>260</y>
+     <width>461</width>
+     <height>411</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ImageSliceDisplay</class>
+   <extends>QWidget</extends>
+   <header>ImageSliceDisplay</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
