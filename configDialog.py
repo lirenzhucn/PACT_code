@@ -72,11 +72,7 @@ class ConfigDialog(QtGui.QDialog):
     self.ui.setupUi(self)
     self.ui.mEditLog.setWordWrapMode(QtGui.QTextOption.WrapAnywhere)
     # set initial input directory
-    #initPath = expanduser(normpath(r'~/Documents'))
-    #self.ui.mEditInputDir.setText(initPath)
-    # for testing
-    initPath =\
-        expanduser(normpath(r'~/Documents/Project_data/PACT_data/2014-07-03'))
+    initPath = expanduser(normpath(r'~/Documents'))
     self.ui.mEditInputDir.setText(initPath)
     self.ui.mEditInputIndex.setText(r'1')
     # initialize opts dict
