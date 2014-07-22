@@ -91,6 +91,7 @@ def reconstruct_2d(opts, progress=update_progress):
   reImg = reconstruction_inline(chn_data_3d, opts['recon'], progress=progress)
   out_format = opts['recon']['out_format']
   save_reconstructed_image(reImg, dest_dir, ind, out_format)
+  return reImg
 
 @argh.arg('-f', '--out-format', type=str, help='Output format. hdf5 or tiff')
 @argh.arg('-o', '--opts-path', type=str, help='path to YAML option file')

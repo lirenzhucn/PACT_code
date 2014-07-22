@@ -47,10 +47,11 @@ class ReconstructThread(QtCore.QThread):
   def __init__(self, opts):
     QtCore.QThread.__init__(self)
     self.opts = opts
+    self.reImg = None
   def progressHandler(self, current, total):
     self.reconstructProgressSignal.emit(current, total)
   def run(self):
-    reconstruct_2d(self.opts, progress=self.progressHandler)
+    self.reImg = reconstruct_2d(self.opts, progress=self.progressHandler)
 
 class Reconstruct3DThread(QtCore.QThread):
   '''the thread class for reconstruct 3d function'''
