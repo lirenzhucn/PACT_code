@@ -115,6 +115,7 @@ class ConfigDialog(QtGui.QDialog):
     self.logText('Done\n')
     # show image
     img = self.reconstructThread.reImg.astype('float32')
+    self.ui.mImageDisplay.setInput(img)
 
   @QtCore.pyqtSlot()
   def workThreadTerminated(self):
