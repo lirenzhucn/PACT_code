@@ -488,7 +488,7 @@
    </widget>
    <widget class="QCheckBox" name="mChkWi">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -520,7 +520,7 @@
    </widget>
    <widget class="QCheckBox" name="mChkExact">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>

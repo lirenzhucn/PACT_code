@@ -5,6 +5,7 @@ import argh
 import numpy as np
 from time import time
 from pact_helpers import *
+from preprocess import subfunc_wiener, subfunc_exact
 
 #import pycuda.autoinit
 import pycuda.driver as cuda
@@ -144,6 +145,12 @@ def reconstruct_3d(opts, progress=update_progress_with_time):
   '''interface function for other python scripts such as Qt applications'''
   ind = opts['load']['EXP_START']
   chn_data, chn_data_3d = load_hdf5_data(opts['extra']['dest_dir'], ind)
+  if opts['display']['wi']:
+    notifyCli('Performing Weiner deconvolution...')
+    chn_data_3d = subfunc_wiener(chn_data_3d)
+  if opts['display']['exact']:
+    notifyCli('Performing filtering...')
+    chn_data_3d = subfunc_exact(chn_data_3d)
   # initialize pycuda properly
   cuda.init()
   dev = cuda.Device(0)
@@ -153,6 +160,7 @@ def reconstruct_3d(opts, progress=update_progress_with_time):
   del ctx
   save_reconstructed_image(reImg, opts['extra']['dest_dir'],\
                            ind, opts['recon']['out_format'], '_3d')
+  return reImg
 
 @argh.arg('opts_path', type=str, help='path to YAML option file')
 def reconstruct(opts_path):

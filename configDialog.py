@@ -59,10 +59,11 @@ class Reconstruct3DThread(QtCore.QThread):
   def __init__(self, opts):
     QtCore.QThread.__init__(self)
     self.opts = opts
+    self.reImg = None
   def progressHandler(self, current, total, timeRemaining):
     self.reconstruct3dProgressSignal.emit(current, total, timeRemaining)
   def run(self):
-    reconstruct_3d(self.opts, progress = self.progressHandler)
+    self.reImg = reconstruct_3d(self.opts, progress = self.progressHandler)
 
 class ConfigDialog(QtGui.QDialog):
   def __init__(self, parent=None):
@@ -98,11 +99,11 @@ class ConfigDialog(QtGui.QDialog):
     self.unpackThread.terminated.connect(self.workThreadTerminated)
     self.unpackThread.finished.connect(self.workThreadFinished)
     self.reconstructThread.terminated.connect(self.workThreadTerminated)
-    self.reconstructThread.finished.connect(self.workThreadFinished)
+    self.reconstructThread.finished.connect(self.reconThreadFinished)
     self.reconstructThread.reconstructProgressSignal.connect\
         (self.updateProgress)
     self.reconstruct3DThread.terminated.connect(self.workThreadTerminated)
-    self.reconstruct3DThread.finished.connect(self.workThreadFinished)
+    self.reconstruct3DThread.finished.connect(self.recon3dThreadFinished)
     self.reconstruct3DThread.reconstruct3dProgressSignal.connect\
         (self.updateProgressWithTime)
 
@@ -113,8 +114,19 @@ class ConfigDialog(QtGui.QDialog):
   @QtCore.pyqtSlot()
   def workThreadFinished(self):
     self.logText('Done\n')
+
+  @QtCore.pyqtSlot()
+  def reconThreadFinished(self):
+    self.logText('Done\n')
     # show image
     img = self.reconstructThread.reImg.astype('float32')
+    self.ui.mImageDisplay.setInput(img)
+
+  @QtCore.pyqtSlot()
+  def recon3dThreadFinished(self):
+    self.logText('Done\n')
+    # show image
+    img = self.reconstruct3DThread.reImg.astype('float32')
     self.ui.mImageDisplay.setInput(img)
 
   @QtCore.pyqtSlot()

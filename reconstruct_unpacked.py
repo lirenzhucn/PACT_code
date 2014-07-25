@@ -10,6 +10,7 @@ from recon_loop import recon_loop, find_index_map_and_angular_weight
 from time import time
 from matplotlib import pyplot as plt
 from scipy.signal import hilbert
+from preprocess import subfunc_wiener, subfunc_exact
 
 
 def reconstruction_inline(chn_data_3d, reconOpts, progress=update_progress):
@@ -88,6 +89,12 @@ def reconstruct_2d(opts, progress=update_progress):
   dest_dir = opts['extra']['dest_dir']
   ind = opts['load']['EXP_START']
   chn_data, chn_data_3d = load_hdf5_data(dest_dir, ind)
+  if opts['display']['wi']:
+    notifyCli('Performing Weiner deconvolution...')
+    chn_data_3d = subfunc_wiener(chn_data_3d)
+  if opts['display']['exact']:
+    notifyCli('Performing filtering...')
+    chn_data_3d = subfunc_exact(chn_data_3d)
   reImg = reconstruction_inline(chn_data_3d, opts['recon'], progress=progress)
   out_format = opts['recon']['out_format']
   save_reconstructed_image(reImg, dest_dir, ind, out_format)
