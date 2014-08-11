@@ -38,8 +38,8 @@ display:
   denoise:           false
 
 recon:
-  algorithm:         envelope # envelope or delay-and-sum
-  # algorithm:         delay-and-sum # envelope or delay-and-sum
+  #algorithm:         envelope # envelope or delay-and-sum
+  algorithm:         delay-and-sum # envelope or delay-and-sum
   V_M:               1.51 # Acoustic velocity in km/s
   ini_angle:         225  # initial angle in degree
   # x_size:            15   # recon. image size
@@ -56,3 +56,4 @@ recon:
   Len_R:             19.8 # focal length (mm)
   z_per_step:        0.1 # z step size (mm)
   z_resolution:      20   # resolution factor of z axis
+  out_format:        tiff
