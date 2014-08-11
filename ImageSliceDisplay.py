@@ -104,5 +104,8 @@ class ImageSliceDisplay(QWidget):
     dSlice[3,:,:] = 255
     self.img = QImage(dSlice.tostring(order='F'),
                  rSlice.shape[0], rSlice.shape[1], QImage.Format_RGB32)
-    self.mLbDisplay.setPixmap(QPixmap.fromImage(self.img))
+    pix = QPixmap.fromImage(self.img)
+    self.mLbDisplay.setPixmap(pix.scaled(self.mLbDisplay.size(),\
+                                         Qt.KeepAspectRatio,\
+                                         Qt.SmoothTransformation))
 

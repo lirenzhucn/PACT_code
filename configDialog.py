@@ -184,15 +184,20 @@ class ConfigDialog(QtGui.QDialog):
         [int(self.ui.mLstBadChannels.item(idx).text())\
          for idx in range(self.ui.mLstBadChannels.count())]
     # display section
-    self.opts['display']['span'] = int(self.ui.mEditSpan.text())
+    #self.opts['display']['span'] = int(self.ui.mEditSpan.text())
+    # removed from UI; use a default value which will be ignored later.
+    self.opts['display']['span'] = 2
     self.opts['display']['wi'] = self.ui.mChkWi.isChecked()
-    self.opts['display']['pc'] = self.ui.mChkPc.isChecked()
+    #self.opts['display']['pc'] = self.ui.mChkPc.isChecked()
+    self.opts['display']['pc'] = False
     self.opts['display']['exact'] = self.ui.mChkExact.isChecked()
-    self.opts['display']['denoise'] = self.ui.mChkDenoise.isChecked()
+    #self.opts['display']['denoise'] = self.ui.mChkDenoise.isChecked()
+    self.opts['display']['denoise'] = False
     # recon section
     algorithms = ['delay-and-sum', 'envelope']
-    self.opts['recon']['algorithm'] =\
-        algorithms[self.ui.mCmbAlgorithm.currentIndex()]
+    #self.opts['recon']['algorithm'] =\
+        #algorithms[self.ui.mCmbAlgorithm.currentIndex()]
+    self.opts['recon']['algorithm'] = 'delay-and-sum'
     self.opts['recon']['V_M'] = self.ui.mSpnVm.value()
     self.opts['recon']['ini_angle'] = self.ui.mSpnInitAngle.value()
     self.opts['recon']['x_size'] = self.ui.mSpnXSize.value()
@@ -210,7 +215,7 @@ class ConfigDialog(QtGui.QDialog):
 
   @QtCore.pyqtSlot()
   def onUnpack(self):
-    '''called when OK is pressed'''
+    '''called when Unpack is pressed'''
     self.setOpts()
     self.unpackThread.opts = self.opts
     self.unpackThread.start()
@@ -245,6 +250,7 @@ class ConfigDialog(QtGui.QDialog):
 if __name__ == '__main__':
   import sys
   app = QtGui.QApplication(sys.argv)
+  app.setStyle('windowsxp')
   configDialog = ConfigDialog()
   # redirecting output to Log TextEdit
   outLogger = OutLogger()
