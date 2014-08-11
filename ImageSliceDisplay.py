@@ -92,6 +92,7 @@ class ImageSliceDisplay(QWidget):
 
   def prepareQImage(self, ind):
     rSlice = np.copy(self.data[:,:,ind], order='F')
+    rSlice = np.transpose(rSlice)
     uSlice = (rSlice - self.dMin)/(self.dMax - self.dMin)
     uSlice[uSlice < 0.0] = 0.0
     uSlice[uSlice > 1.0] = 1.0
