@@ -2,7 +2,7 @@
 
 from Queue import Queue
 from PyQt4 import QtCore, QtGui
-from os.path import normpath, expanduser
+from os.path import normpath, expanduser, splitext
 import os
 
 from ui_configDialog import Ui_ConfigDialog
@@ -12,7 +12,8 @@ from reconstruct_unpacked_3d import reconstruct_3d
 from pact_helpers import *
 
 import yaml
-import tempfile
+import h5py
+import skimage.io._plugins.freeimage_plugin as fi
 
 class LogListener(QtCore.QThread):
   mysignal = QtCore.pyqtSignal(str)
@@ -91,7 +92,9 @@ class ConfigDialog(QtGui.QDialog):
     # connecting UI signals to slots
     self.ui.mBtnClose.clicked.connect(self.onClose)
     self.ui.mBtnUnpack.clicked.connect(self.onUnpack)
+    self.ui.mBtnSaveImage.clicked.connect(self.onSaveImage)
     self.ui.mBtnReconstruct.clicked.connect(self.onReconstruct)
+    self.ui.mBtnReconstructAverage.clicked.connect(self.onReconstructAverage)
     self.ui.mBtnReconstruct3D.clicked.connect(self.onReconstruct3D)
     self.ui.mBtnChooseInput.clicked.connect(self.onChooseInput)
     self.ui.mBtnClearLog.clicked.connect(self.onClearLog)
@@ -228,6 +231,10 @@ class ConfigDialog(QtGui.QDialog):
     self.reconstructThread.start()
 
   @QtCore.pyqtSlot()
+  def onReconstructAverage(self):
+    pass
+
+  @QtCore.pyqtSlot()
   def onReconstruct3D(self):
     '''called when Reconstruct3D is pressed'''
     self.setOpts()
@@ -238,6 +245,40 @@ class ConfigDialog(QtGui.QDialog):
   def onClose(self):
     '''called when Close is pressed'''
     self.done(0)
+
+  @QtCore.pyqtSlot()
+  def onSaveImage(self):
+    '''called when Save Image is pressed'''
+    reImg = self.ui.mImageDisplay.data
+    if reImg is None:
+      QtGui.QMessageBox.critical\
+              (self.tr('Nothing reconstructed.'))
+      return
+
+    filterStr = 'Images (*.tiff *.h5)'
+    if self.opts['recon']['out_format'] == 'hdf5':
+      filterStr = 'Images (*.h5)'
+    elif self.opts['recon']['out_format'] == 'tiff':
+      filterStr = 'Images (*.tiff)'
+    filename = QtGui.QFileDialog.getSaveFileName\
+            (self, 'Save Image',\
+             self.opts['extra']['dest_dir'], filterStr)
+    filename = str(filename)
+    basename, extname = splitext(filename)
+    if extname == '.tiff':
+      self.logText('Saving image data to ' + filename + '\n')
+      imageList = [reImg[:,:,i] for i in range(reImg.shape[2])]
+      fi.write_multipage(imageList, filename)
+    elif extname == '.h5':
+      self.logText('Saving image data to ' + filename)
+      f = h5py.File(filename, 'w')
+      f['reImg'] = reImg
+      f.close()
+    else:
+      QtGui.QMessageBox.critical\
+              (self.tr('Output format ' + extname[1:] +\
+                      ' not supported'))
+    self.logText('Done\n')
 
   @QtCore.pyqtSlot()
   def onChooseInput(self):

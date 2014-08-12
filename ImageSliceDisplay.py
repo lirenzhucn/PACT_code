@@ -51,6 +51,7 @@ class ImageSliceDisplay(QWidget):
     QWidget.__init__(self, parent)
     self.dMin = 0.0
     self.dMax = 0.0
+    self.data = None
     #self.mLbDisplay = QLabel(self)
     self.mLbDisplay = DoubleClickableLabel(self)
     self.mScSlice = QScrollBar(Qt.Vertical, self)
