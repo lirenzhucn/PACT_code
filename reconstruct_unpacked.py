@@ -38,8 +38,8 @@ def reconstruction_inline(chn_data_3d, reconOpts, progress=update_progress):
     return None
   totalSteps = nSteps
   anglePerStep = 2 * np.pi / totalSteps
-  nPixelx = xSize * rf
-  nPixely = ySize * rf
+  nPixelx = int(round(xSize * rf))
+  nPixely = int(round(ySize * rf))
   # note range is 0-start indices
   xRange = (np.arange(1, nPixelx + 1, 1, dtype=np.double)
             - nPixelx / 2) * xSize / nPixelx + xCenter
