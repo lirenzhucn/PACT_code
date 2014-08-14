@@ -252,7 +252,8 @@ class ConfigDialog(QtGui.QDialog):
     reImg = self.ui.mImageDisplay.data
     if reImg is None:
       QtGui.QMessageBox.critical\
-              (self.tr('Nothing reconstructed.'))
+              (self, self.tr('Error'),\
+               self.tr('Nothing reconstructed.'))
       return
 
     filterStr = 'Images (*.tiff *.h5)'
