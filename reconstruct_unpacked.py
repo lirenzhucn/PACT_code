@@ -85,6 +85,22 @@ def reconstruction_inline(chn_data_3d, reconOpts, progress=update_progress):
     progress(z + 1, zSteps)
   return reImg
 
+def reconstruct_2d_average(opts, progress=update_progress):
+  dest_dir = opts['extra']['dest_dir']
+  ind = opts['load']['EXP_START']
+  chn_data, chn_data_3d = load_hdf5_data(dest_dir, ind)
+  if opts['display']['wi']:
+    notifyCli('Performing Weiner deconvolution...')
+    chn_data = subfunc_wiener(chn_data)
+  if opts['display']['exact']:
+    notifyCli('Performing filtering...')
+    chn_data = subfunc_exact(chn_data)
+  chn_data.resize((chn_data.shape[0], chn_data.shape[1], 1))
+  reImg = reconstruction_inline(chn_data, opts['recon'], progress=progress)
+  out_format = opts['recon']['out_format']
+  #save_reconstructed_image(reImg, dest_dir, ind, out_format)
+  return reImg
+
 def reconstruct_2d(opts, progress=update_progress):
   dest_dir = opts['extra']['dest_dir']
   ind = opts['load']['EXP_START']
