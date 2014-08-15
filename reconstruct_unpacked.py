@@ -98,7 +98,7 @@ def reconstruct_2d_average(opts, progress=update_progress):
   chn_data.resize((chn_data.shape[0], chn_data.shape[1], 1))
   reImg = reconstruction_inline(chn_data, opts['recon'], progress=progress)
   out_format = opts['recon']['out_format']
-  #save_reconstructed_image(reImg, dest_dir, ind, out_format)
+  save_reconstructed_image(reImg, dest_dir, ind, out_format)
   return reImg
 
 def reconstruct_2d(opts, progress=update_progress):
@@ -113,7 +113,7 @@ def reconstruct_2d(opts, progress=update_progress):
     chn_data_3d = subfunc_exact(chn_data_3d)
   reImg = reconstruction_inline(chn_data_3d, opts['recon'], progress=progress)
   out_format = opts['recon']['out_format']
-  #save_reconstructed_image(reImg, dest_dir, ind, out_format)
+  save_reconstructed_image(reImg, dest_dir, ind, out_format)
   return reImg
 
 @argh.arg('-f', '--out-format', type=str, help='Output format. hdf5 or tiff')
