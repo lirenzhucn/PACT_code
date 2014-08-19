@@ -5,13 +5,14 @@
 import npyscreen as nps
 from pact_helpers import *
 from reconstruct_unpacked import reconstruct_2d, reconstruct_2d_average
-from reconstruct_unpacked_3d import reconstruct_3d
+from reconstruct_unpacked_3d import reconstruct_3d, reconstruct_3d_stational
 from unpack_data import unpack
 from os.path import expanduser
 from enum import IntEnum
 
 ReconActions = IntEnum('ReconActions',\
-                       'SLICE_2D AVERAGE_2D STATIONAL_2D SCAN_3D STATIONAL_3D UNPACK')
+                       'SLICE_2D AVERAGE_2D STATIONAL_2D' +
+                       ' SCAN_3D STATIONAL_3D UNPACK')
 ACTION_STR = ('2D slice', '2D average', '2D stational',\
               '3D scanning', '3D stational', 'Unpack')
 def actionToString(action):
@@ -147,7 +148,8 @@ if __name__ == '__main__':
   #elif action == ReconActions.STATIONAL_2D:
   elif action == ReconActions.SCAN_3D:
     reImg = reconstruct_3d(opts)
-  #elif action == ReconActions.STATIONAL_3D:
+  elif action == ReconActions.STATIONAL_3D:
+    reImg = reconstruct_3d_stational(opts)
   elif action == ReconActions.UNPACK:
     # unpack
     unpack(opts)
