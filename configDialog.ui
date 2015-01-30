@@ -526,21 +526,24 @@
      <rect>
       <x>130</x>
       <y>20</y>
-      <width>61</width>
+      <width>71</width>
       <height>22</height>
      </rect>
     </property>
+    <property name="decimals">
+     <number>3</number>
+    </property>
     <property name="singleStep">
-     <double>0.010000000000000</double>
+     <double>0.001000000000000</double>
     </property>
     <property name="value">
-     <double>1.510000000000000</double>
+     <double>1.500000000000000</double>
     </property>
    </widget>
    <widget class="QLabel" name="lb11">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>200</x>
       <y>20</y>
       <width>41</width>
       <height>16</height>
