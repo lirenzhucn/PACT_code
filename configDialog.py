@@ -291,7 +291,7 @@ class ConfigDialog(QtGui.QDialog):
 
 if __name__ == '__main__':
   import sys
-  app = QtGui.QApplication(sys.argv)
+  app = QtGui.QApplication(sys.argv + ['-style=windows'])
   configDialog = ConfigDialog()
   # redirecting output to Log TextEdit
   outLogger = OutLogger()
@@ -300,4 +300,3 @@ if __name__ == '__main__':
   sys.stdout = outLogger
   ret = configDialog.exec_()
   sys.exit(ret)
-
